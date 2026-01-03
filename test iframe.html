@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Safety Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            cursor: default;
+        }
+
+        button, .choice-btn, .match-item {
+            cursor: pointer;
+        }
+
+        /* Main container - simulates phone/tablet screen */
+        #app {
+            width: 960px;
+            height: 540px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen system */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Start Screen */
+        .start-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .start-content {
+            text-align: center;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .start-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .start-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .start-tagline {
+            font-size: 24px;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .btn-start {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 18px 48px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            }
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            animation: none;
+        }
+
+        .btn-start:active {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Header bar */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Content area */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Setup Screen */
+        .setup-form {
+            max-width: 400px;
+            margin: 60px auto;
+            text-align: center;
+        }
+
+        .setup-form h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 28px;
+        }
+
+        .setup-form p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .avatar-placeholder {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .camera-btn-container {
+            height: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Friend Request Card */
+        .friend-request-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 40px auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .fr-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fr-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .fr-info h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .fr-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mutual-friends {
+            background: #f0f2f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #f0f2f5;
+            color: #333;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #e4e6eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* Profile Screen */
+        .profile-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(180deg, #f0f2f5 0%, white 100%);
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .joined-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .profile-posts {
+            padding: 20px;
+        }
+
+        .post {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .post-text {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 8px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 10px;
+            background: #f0f2f5;
+            min-height: 0;
+            max-height: calc(100% - 140px);
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            animation: slideInMessage 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes slideInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message.them {
+            justify-content: flex-start;
+        }
+
+        .message.them .message-bubble {
+            animation: bounceIn 0.4s ease;
+        }
+
+        .message.me {
+            justify-content: flex-end;
+        }
+
+        .message.me .message-bubble {
+            animation: slideInRight 0.4s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateX(-20px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.them .message-bubble {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.me .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-choices {
+            padding: 10px 12px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .choice-btn {
+            flex: 1;
+            min-width: 180px;
+            max-width: 300px;
+            background: #f0f2f5;
+            border: 2px solid #e0e0e0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.2s;
+            line-height: 1.3;
+        }
+
+        .choice-btn:hover {
+            background: #e4e6eb;
+            border-color: #667eea;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Risk Meter */
+        .risk-meter {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 160px;
+            z-index: 100;
+        }
+
+        /* User Profile Badge */
+        .user-profile-badge {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 101;
+        }
+
+        .user-profile-badge.active {
+            display: flex;
+        }
+
+        .user-badge-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .user-badge-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .risk-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .risk-bar-container {
+            background: #e0e0e0;
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .risk-bar {
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+            font-weight: 700;
+            padding: 0 8px;
+            min-width: 50px;
+        }
+
+        .risk-bar.pulse {
+            animation: riskPulse 0.6s ease;
+        }
+
+        @keyframes riskPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .risk-level-text {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Green Tick Counter (inside risk meter) */
+        .green-tick-section {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .tick-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tick-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .tick-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tick-icon {
+            font-size: 18px;
+        }
+
+        .tick-icon.earned-animation {
+            animation: tickEarned 0.6s ease;
+        }
+
+        @keyframes tickEarned {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .tick-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        /* Cutscene Overlay */
+        .cutscene-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .cutscene-overlay.active {
+            display: flex;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .cutscene-subtitle {
+            background: rgba(255,255,255,0.95);
+            padding: 20px 30px;
+            border-radius: 8px;
+            max-width: 700px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cutscene-subtitle p {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .cutscene-thought {
+            color: #667eea;
+            font-style: italic;
+            font-size: 15px;
+        }
+
+        .cutscene-continue {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cutscene-continue:hover {
+            background: #f0f2f5;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Results Screen */
+        .results-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .results-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .results-icon.low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .results-icon.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .results-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .results-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .choice-review {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .choice-review h4 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .choice-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .choice-item.safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .choice-item.risky {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Mini Game */
+        .minigame-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .minigame-intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .minigame-intro h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .minigame-intro p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .matching-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .matching-column h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .match-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .match-item:hover {
+            border-color: #667eea;
+            transform: translateX(4px) scale(1.02);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .match-item.selected {
+            border-color: #667eea;
+            background: #f0f2f5;
+        }
+
+        .match-item.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            pointer-events: none;
+        }
+
+        .match-item.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .game-feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .game-feedback.active {
+            display: block;
+        }
+
+        .game-feedback.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive */
+        @media (max-width: 960px) {
+            #app {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .risk-meter {
+                right: 10px;
+                top: 70px;
+                min-width: 120px;
+                padding: 10px;
+            }
+            
+            .risk-label {
+                font-size: 11px;
+            }
+            
+            .risk-bar-container {
+                height: 20px;
+            }
+            
+            .risk-level-text {
+                font-size: 12px;
+            }
+
+            .user-profile-badge {
+                right: 10px;
+                top: 12px;
+                padding: 6px 10px;
+            }
+
+            .user-badge-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .user-badge-name {
+                font-size: 13px;
+                max-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Start Screen (NEW) -->
+        <div class="screen active" id="startScreen">
+            <div class="start-container">
+                <div class="start-content">
+                    <div class="start-icon">🚩</div>
+                    <h1 class="start-title">Behind the Screen</h1>
+                    <p class="start-tagline">Would You Recognize the Red Flags?</p>
+                    <button class="btn-start" onclick="beginExperience()">Start Experience</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Setup Screen -->
+        <div class="screen" id="setupScreen">
+            <div class="header">Welcome to Pbcupgram</div>
+            <div class="content">
+                <div class="setup-form">
+                    <div class="avatar-placeholder" id="avatarPreview">👤</div>
+                    <div class="camera-btn-container">
+                        <button class="btn-secondary" onclick="startCamera()" id="cameraBtn" style="width: auto; padding: 10px 20px;">
+                            📷 Take Profile Photo
+                        </button>
+                    </div>
+                    <div id="cameraContainer" style="display: none; margin-bottom: 20px;">
+                        <video id="cameraVideo" width="200" height="200" autoplay style="border-radius: 50%; border: 3px solid #667eea;"></video>
+                        <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn-secondary" onclick="capturePhoto()" style="padding: 8px 16px; width: auto;">Capture</button>
+                            <button class="btn-secondary" onclick="stopCamera()" style="padding: 8px 16px; width: auto;">Cancel</button>
+                        </div>
+                    </div>
+                    <h2>Create Your Profile</h2>
+                    <p>Choose a username to get started</p>
+                    <input type="text" id="usernameInput" placeholder="Enter username" maxlength="20">
+                    <button class="btn-primary" onclick="completeSetup()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friend Request Screen -->
+        <div class="screen" id="friendRequestScreen">
+            <div class="header">Friend Requests</div>
+            <div class="content">
+                <div class="friend-request-card">
+                    <div class="fr-header">
+                        <div class="fr-avatar">🙂</div>
+                        <div class="fr-info">
+                            <h3>Alex T.</h3>
+                            <p>Sent you a friend request</p>
+                        </div>
+                    </div>
+                    <div class="mutual-friends">
+                        👥 12 mutual friends
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-secondary" onclick="viewProfile()">View Profile</button>
+                        <button class="btn-primary" style="flex: 1;" onclick="showAcceptModal()">Accept</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Feed Screen (NEW) -->
+        <div class="screen" id="socialFeedScreen">
+            <div class="header">
+                <button class="back-btn" onclick="goBack('profileScreen')">← Back</button>
+                <span>Alex T.'s Posts</span>
+                <span></span>
+            </div>
+            <div class="content" style="padding: 0;">
+                <div style="padding: 20px; background: white; border-bottom: 1px solid #e0e0e0;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px;">🙂</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 15px; color: #333;">Alex T.</div>
+                            <div style="font-size: 13px; color: #666;">2 weeks ago</div>
+                        </div>
+                    </div>
+                    <div style="color: #333; font-size: 15px; line-height: 1.5; margin-bottom: 12px;">
+                        Just joined! Super excited to meet new people in the area! 🎉
+                    </div>
+                    <div style="height: 200px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
+                        📷 Generic welcome image
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 20px; color: #666; font-size: 14px;">
+                        <span>❤️ 45 likes</span>
+                        <span>💬 8 comments</span>
+                    </div>
+                </div>
+
+                <div style="padding: 20px; background: white; border-bottom: 1px solid #e0e0e0;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px;">🙂</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 15px; color: #333;">Alex T.</div>
+                            <div style="font-size: 13px; color: #666;">1 week ago</div>
+                        </div>
+                    </div>
+                    <div style="color: #333; font-size: 15px; line-height: 1.5; margin-bottom: 12px;">
+                        Love exploring the city! Anyone know good spots to hang out? 🌆
+                    </div>
+                    <div style="height: 200px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
+                        📷 City skyline image
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 20px; color: #666; font-size: 14px;">
+                        <span>❤️ 32 likes</span>
+                        <span>💬 12 comments</span>
+                    </div>
+                </div>
+
+                <div style="padding: 20px; background: white;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px;">🙂</div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 15px; color: #333;">Alex T.</div>
+                            <div style="font-size: 13px; color: #666;">5 days ago</div>
+                        </div>
+                    </div>
+                    <div style="color: #333; font-size: 15px; line-height: 1.5;">
+                        Looking forward to making real connections here. Feels like everyone's so fake online these days 😊
+                    </div>
+                    <div style="margin-top: 12px; display: flex; gap: 20px; color: #666; font-size: 14px;">
+                        <span>❤️ 28 likes</span>
+                        <span>💬 6 comments</span>
+                    </div>
+                </div>
+
+                <div style="padding: 20px; background: #f8f9fa; text-align: center;">
+                    <button class="btn-primary" onclick="backToProfile()">Back to Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div class="screen" id="profileScreen">
+            <div class="header">
+                <button class="back-btn" onclick="goBack('friendRequestScreen')">← Back</button>
+                <span>Profile</span>
+                <span></span>
+            </div>
+            <div class="content">
+                <div class="profile-header">
+                    <div class="profile-avatar">🙂</div>
+                    <div class="profile-name">Alex T.</div>
+                    <div class="profile-meta">
+                        📍 Lives nearby<br>
+                        🎓 Student
+                    </div>
+                    <div class="joined-badge">⚠️ Joined recently (2 weeks ago)</div>
+                </div>
+                <div class="profile-posts">
+                    <div class="post">
+                        <div class="post-text">Just joined! Looking forward to connecting with everyone 😊</div>
+                    </div>
+                    <div class="post">
+                        <div class="post-text">Love exploring new places!</div>
+                        <div class="post-image">📷 [Generic scenic photo]</div>
+                    </div>
+                    <div class="post">
+                        <div class="post-text">Can't wait to meet new friends in the area!</div>
+                    </div>
+                    <button class="btn-secondary" onclick="viewSocialFeed()" style="margin: 0 20px 20px 20px; width: calc(100% - 40px);">
+                        View All Posts
+                    </button>
+                </div>
+                <div style="padding: 20px;">
+                    <button class="btn-primary" onclick="showAcceptModal()">Accept Friend Request</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="screen" id="chatScreen">
+            <div class="header">
+                <button class="back-btn" onclick="exitChat()">← Exit</button>
+                <span>Alex T.</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="chatHeaderAvatar" style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; background-size: cover; background-position: center;">👤</div>
+                    <span id="chatHeaderUsername" style="font-size: 14px; font-weight: 500;"></span>
+                </div>
+            </div>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-choices" id="chatChoices">
+                    <!-- Choices will be inserted here -->
+                </div>
+            </div>
+            <!-- Risk Meter (inside chat screen) -->
+            <div class="risk-meter" id="riskMeter" style="display: none;">
+                <div class="risk-label">RISK LEVEL</div>
+                <div class="risk-bar-container">
+                    <div class="risk-bar" id="riskBar" style="width: 0%; background: #28a745;">
+                        LOW
+                    </div>
+                </div>
+                <div class="risk-level-text" id="riskLevelText" style="color: #28a745;">Low</div>
+                
+                <!-- Green Tick Counter (combined in same box) -->
+                <div class="green-tick-section">
+                    <div class="tick-display">
+                        <span class="tick-label">SAFE CHOICES</span>
+                        <div class="tick-counter">
+                            <span class="tick-icon" id="tickIcon">✅</span>
+                            <span class="tick-count" id="tickCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="header">Your Safety Report</div>
+            <div class="content">
+                <div class="results-container">
+                    <div class="results-icon" id="resultsIcon">🛡️</div>
+                    <h2 class="results-title" id="resultsTitle">Risk Assessment Complete</h2>
+                    <p class="results-subtitle" id="resultsSubtitle"></p>
+                    
+                    <div class="choice-review">
+                        <h4>Your Choices:</h4>
+                        <div id="choicesList"></div>
+                    </div>
+
+                    <button class="btn-primary" onclick="startMinigame()">Continue to Learning Activity</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minigame Screen -->
+        <div class="screen" id="minigameScreen">
+            <div class="header">Red Flag Recognition</div>
+            <div class="content">
+                <div class="minigame-container">
+                    <div class="minigame-intro">
+                        <h3>Match the Red Flags</h3>
+                        <p>Connect warning signs with safe responses</p>
+                    </div>
+                    <div class="matching-game">
+                        <div class="matching-column">
+                            <h4>🚩 Red Flags</h4>
+                            <div class="match-item" data-id="redFlag1" onclick="selectItem(this, 'flag')">
+                                Asking for personal info quickly
+                            </div>
+                            <div class="match-item" data-id="redFlag2" onclick="selectItem(this, 'flag')">
+                                Wants to meet alone soon
+                            </div>
+                            <div class="match-item" data-id="redFlag3" onclick="selectItem(this, 'flag')">
+                                Asks about supervision
+                            </div>
+                            <div class="match-item" data-id="redFlag4" onclick="selectItem(this, 'flag')">
+                                Requesting private photos
+                            </div>
+                        </div>
+                        <div class="matching-column">
+                            <h4>✅ Safe Responses</h4>
+                            <div class="match-item" data-id="response3" data-match="redFlag3" onclick="selectItem(this, 'response')">
+                                "I only share that with close friends"
+                            </div>
+                            <div class="match-item" data-id="response1" data-match="redFlag1" onclick="selectItem(this, 'response')">
+                                "Let's get to know each other first"
+                            </div>
+                            <div class="match-item" data-id="response4" data-match="redFlag4" onclick="selectItem(this, 'response')">
+                                "I'm not comfortable with that"
+                            </div>
+                            <div class="match-item" data-id="response2" data-match="redFlag2" onclick="selectItem(this, 'response')">
+                                "I prefer group settings"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-feedback" id="gameFeedback"></div>
+                    <button class="btn-primary" id="finishBtn" style="margin-top: 30px; display: none;" onclick="finishExperience()">
+                        Complete Experience
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cutscene Overlay -->
+    <div class="cutscene-overlay" id="cutsceneOverlay">
+        <div class="cutscene-subtitle">
+            <p id="cutsceneText"></p>
+            <p class="cutscene-thought" id="cutsceneThought"></p>
+        </div>
+        <button class="cutscene-continue" onclick="closeCutscene()">Continue</button>
+    </div>
+
+    <!-- Accept Modal -->
+    <div class="modal-overlay" id="acceptModal">
+        <div class="modal">
+            <h3>⚠️ Are you sure?</h3>
+            <p>Do you really know this person? Fake accounts often use mutual friends to gain trust. It's safer to only accept requests from people you know in real life.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="acceptFriend()">Accept Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Green Flag Intro Modal -->
+    <div class="modal-overlay" id="greenFlagIntroModal">
+        <div class="modal" style="text-align: center;">
+            <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 0.6s ease infinite;">✅</div>
+            <h3 style="color: #28a745;">Green Tick Earned!</h3>
+            <p>Great choice! You've earned your first green tick for making a safe decision. Keep collecting them by setting boundaries and protecting your information.</p>
+            <button class="modal-btn confirm" onclick="closeGreenFlagIntro()" style="width: 100%; margin-top: 10px;">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        const state = {
+            username: '',
+            profilePhoto: null,
+            riskScore: 0,
+            greenFlags: 0,
+            hasSeenGreenFlagIntro: false,
+            currentStage: 0,
+            choices: [],
+            selectedFlag: null,
+            selectedResponse: null,
+            matchesComplete: 0,
+            cameraStream: null,
+            soundEnabled: true,
+            currentTime: new Date(2024, 11, 1, 14, 30) // Start at Dec 1, 2024, 2:30 PM
+        };
+
+        // ==================== SOUND SYSTEM ====================
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'message':
+                    // Gentle notification sound
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.15);
+                    break;
+                
+                case 'click':
+                    // Button click sound
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.05);
+                    break;
+                
+                case 'typing':
+                    // Typing sound (short click)
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.03);
+                    break;
+                
+                case 'risk':
+                    // Warning tone
+                    oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                    break;
+                
+                case 'success':
+                    // Success chime
+                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.3);
+                    break;
+
+                case 'greenFlag':
+                    // Green flag celebration sound (ascending happy notes)
+                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.08);
+                    oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.16);
+                    gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.4);
+                    break;
+            }
+        }
+
+        // ==================== CONVERSATION STAGES ====================
+        const conversationStages = [
+            {
+                // Stage 0: Initial greeting
+                messages: [
+                    { sender: 'them', text: "Hey {username}! Thanks for accepting my friend request! 😊", delay: 1000 },
+                    { sender: 'them', text: "I saw we have some mutual friends. How do you know them?", delay: 2000 }
+                ],
+                choices: [
+                    { text: "We go to the same school", risk: 5, label: "Shared location info" },
+                    { text: "We're in the same hobby group", risk: 2, label: "Vague response" },
+                    { text: "I'd rather not share that yet", risk: 0, label: "Boundary setting" }
+                ],
+                cutscene: null
+            },
+            {
+                // Stage 1: Location probing
+                lowRisk: [
+                    { sender: 'them', text: "That's cool! What area of town are you in?", delay: 2000 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Oh nice! Which school? I might know some people there.", delay: 2000 }
+                ],
+                choices: [
+                    { text: "I live near [specific neighborhood]", risk: 8, label: "Precise location shared" },
+                    { text: "Somewhere in the city", risk: 3, label: "Vague location" },
+                    { text: "I prefer to keep that private for now", risk: 0, label: "Privacy maintained" }
+                ],
+                cutscene: {
+                    text: "Alex is asking about where you live...",
+                    thought: "Should I be sharing this information with someone I just met online?"
+                }
+            },
+            {
+                // Stage 2: Escalation - supervision questions
+                lowRisk: [
+                    { sender: 'them', text: "No problem {username}, I understand.", delay: 1500 },
+                    { sender: 'them', text: "So do your parents check your phone often? Mine are so annoying about it 🙄", delay: 2500 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Nice! I'm not too far from there actually.", delay: 1500 },
+                    { sender: 'them', text: "Do your parents ever check who you're talking to? Mine don't really pay attention lol", delay: 2500 }
+                ],
+                choices: [
+                    { text: "No, they don't really check", risk: 10, label: "Revealed lack of supervision" },
+                    { text: "Sometimes they do", risk: 5, label: "Partial info shared" },
+                    { text: "That's kind of personal, why do you ask?", risk: 0, label: "Questioned motive" }
+                ],
+                cutscene: {
+                    text: "Now Alex wants to know if adults are monitoring your conversations...",
+                    thought: "Why would they need to know if my parents check my phone? This feels uncomfortable."
+                }
+            },
+            {
+                // Stage 3: Meeting suggestion
+                lowRisk: [
+                    { sender: 'them', text: "Fair enough.", delay: 1500 },
+                    { sender: 'them', text: "Well {username}, maybe meeting up would be better?", delay: 2000 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Cool, so we could chat freely then.", delay: 1500 },
+                    { sender: 'them', text: "Maybe we could meet up sometime {username}? Like grab coffee or something?", delay: 2500 },
+                    { sender: 'them', text: "Just the two of us, would be fun to get to know you better 😊", delay: 3500 }
+                ],
+                choices: [
+                    { text: "Sure, that sounds great!", risk: 15, label: "Agreed to private meeting" },
+                    { text: "Maybe with our mutual friends?", risk: 5, label: "Suggested group setting" },
+                    { text: "I don't meet people I only know online", risk: 0, label: "Clear boundary" }
+                ],
+                cutscene: {
+                    text: "Alex is pushing to meet in person, alone...",
+                    thought: "This is happening too fast. I barely know this person. Something doesn't feel right."
+                }
+            }
+        ];
+
+        // ==================== CAMERA FUNCTIONS ====================
+        async function startCamera() {
+            const video = document.getElementById('cameraVideo');
+            const container = document.getElementById('cameraContainer');
+            const cameraBtn = document.getElementById('cameraBtn');
+            const avatarPreview = document.getElementById('avatarPreview');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 640 },
+                        facingMode: 'user'
+                    } 
+                });
+                
+                video.srcObject = stream;
+                state.cameraStream = stream;
+                container.style.display = 'block';
+                cameraBtn.style.display = 'none';
+                avatarPreview.style.display = 'none'; // Hide placeholder
+            } catch (error) {
+                alert('Camera access denied or not available. You can continue without a profile photo.');
+                console.error('Camera error:', error);
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, 200, 200);
+            
+            const photoData = canvas.toDataURL('image/png');
+            state.profilePhoto = photoData;
+            
+            // Update avatar preview
+            const avatarPreview = document.getElementById('avatarPreview');
+            avatarPreview.style.backgroundImage = `url(${photoData})`;
+            avatarPreview.style.backgroundSize = 'cover';
+            avatarPreview.style.backgroundPosition = 'center';
+            avatarPreview.textContent = '';
+            avatarPreview.style.display = 'flex'; // Show again with photo
+            
+            // Stop camera
+            stopCamera();
+        }
+
+        function stopCamera() {
+            const avatarPreview = document.getElementById('avatarPreview');
+            
+            if (state.cameraStream) {
+                state.cameraStream.getTracks().forEach(track => track.stop());
+                state.cameraStream = null;
+            }
+            
+            document.getElementById('cameraContainer').style.display = 'none';
+            document.getElementById('cameraBtn').style.display = 'block';
+            avatarPreview.style.display = 'flex'; // Show placeholder again
+        }
+
+        // ==================== SCREEN NAVIGATION ====================
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goBack(screenId) {
+            showScreen(screenId);
+        }
+
+        function exitChat() {
+            showScreen('friendRequestScreen');
+        }
+
+        function beginExperience() {
+            playSound('click');
+            showScreen('setupScreen');
+        }
+
+        // ==================== SETUP ====================
+        function completeSetup() {
+            const username = document.getElementById('usernameInput').value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+            state.username = username;
+            
+            // Stop camera if still running
+            if (state.cameraStream) {
+                stopCamera();
+            }
+            
+            showScreen('friendRequestScreen');
+        }
+
+        // ==================== FRIEND REQUEST ====================
+        function viewProfile() {
+            showScreen('profileScreen');
+        }
+
+        function viewSocialFeed() {
+            showScreen('socialFeedScreen');
+        }
+
+        function backToProfile() {
+            showScreen('profileScreen');
+        }
+
+        function showAcceptModal() {
+            document.getElementById('acceptModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('acceptModal').classList.remove('active');
+        }
+
+        function acceptFriend() {
+            closeModal();
+            startChat();
+        }
+
+        // ==================== CHAT SYSTEM ====================
+        function startChat() {
+            showScreen('chatScreen');
+            document.getElementById('riskMeter').style.display = 'block';
+            document.getElementById('chatMessages').innerHTML = '<div class="typing-indicator" id="typingIndicator"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+            document.getElementById('chatChoices').innerHTML = '';
+            
+            // Update chat header with user info
+            const headerAvatar = document.getElementById('chatHeaderAvatar');
+            const headerUsername = document.getElementById('chatHeaderUsername');
+            
+            headerUsername.textContent = state.username;
+            
+            if (state.profilePhoto) {
+                headerAvatar.style.backgroundImage = `url(${state.profilePhoto})`;
+                headerAvatar.style.backgroundSize = 'cover';
+                headerAvatar.style.backgroundPosition = 'center';
+                headerAvatar.textContent = '';
+            }
+            
+            // Reset time to start of conversation
+            state.currentTime = new Date(2024, 11, 1, 14, 30);
+            
+            state.currentStage = 0;
+            state.choices = [];
+            state.greenFlags = 0;
+            state.hasSeenGreenFlagIntro = false;
+            updateGreenTickDisplay();
+            
+            playStage(0);
+        }
+
+        function formatTime(date) {
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            return `${hours}:${minutes} ${ampm}`;
+        }
+
+        function playStage(stageIndex) {
+            if (stageIndex >= conversationStages.length) {
+                endConversation();
+                return;
+            }
+
+            const stage = conversationStages[stageIndex];
+            let messages;
+
+            // Update time between stages (without showing dividers)
+            if (stageIndex === 1) {
+                state.currentTime.setHours(state.currentTime.getHours() + 2);
+            } else if (stageIndex === 2) {
+                state.currentTime.setDate(state.currentTime.getDate() + 1);
+                state.currentTime.setHours(19, 0); // Next day, 7 PM
+            } else if (stageIndex === 3) {
+                state.currentTime.setHours(state.currentTime.getHours() + 1);
+            }
+
+            // Determine which message path based on risk
+            if (stageIndex === 0) {
+                messages = stage.messages;
+            } else {
+                messages = state.riskScore >= 10 ? stage.highRisk : stage.lowRisk;
+            }
+
+            // Check if stage has choices
+            if (!stage.choices) {
+                // No choices, just play messages and continue
+                playMessages(messages, () => {
+                    state.currentStage++;
+                    playStage(state.currentStage);
+                });
+                return;
+            }
+
+            // Play messages, then show cutscene if exists, then show choices
+            playMessages(messages, () => {
+                if (stage.cutscene) {
+                    showCutscene(stage.cutscene, () => {
+                        showChoices(stage.choices);
+                    });
+                } else {
+                    showChoices(stage.choices);
+                }
+            });
+        }
+
+        function playMessages(messages, callback) {
+            let delay = 0;
+            const typingIndicator = document.getElementById('typingIndicator');
+
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    if (msg.sender === 'them') {
+                        // Move typing indicator to bottom before showing
+                        const messagesContainer = document.getElementById('chatMessages');
+                        messagesContainer.appendChild(typingIndicator);
+                        typingIndicator.classList.add('active');
+                    }
+                }, delay);
+
+                delay += msg.delay;
+
+                setTimeout(() => {
+                    typingIndicator.classList.remove('active');
+                    addMessage(msg.sender, msg.text);
+                    
+                    if (index === messages.length - 1) {
+                        callback();
+                    }
+                }, delay);
+            });
+        }
+
+        function addMessage(sender, text) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === 'them' ? 'them' : 'me'}`;
+            
+            // Replace {username} placeholder with actual username
+            const displayText = text.replace(/{username}/g, state.username);
+            
+            // Add timestamp
+            const timestamp = formatTime(state.currentTime);
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${displayText}
+                    <span class="message-timestamp">${timestamp}</span>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Advance time slightly for next message (1-2 minutes)
+            state.currentTime.setMinutes(state.currentTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
+
+            // Play sound for incoming messages
+            if (sender === 'them') {
+                playSound('message');
+            }
+        }
+
+        // New function for typing effect on user messages
+        function addMessageWithTyping(text, callback) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message me';
+            
+            const timestamp = formatTime(state.currentTime);
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = `<span class="message-timestamp">${timestamp}</span>`;
+            
+            const textSpan = document.createElement('span');
+            bubble.insertBefore(textSpan, bubble.firstChild);
+            
+            messageDiv.appendChild(bubble);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            let currentChar = 0;
+            const typingSpeed = 30; // milliseconds per character
+            
+            function typeCharacter() {
+                if (currentChar < text.length) {
+                    textSpan.textContent += text[currentChar];
+                    currentChar++;
+                    
+                    // Play typing sound every 3 characters for rhythm
+                    if (currentChar % 3 === 0) {
+                        playSound('typing');
+                    }
+                    
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    setTimeout(typeCharacter, typingSpeed);
+                } else {
+                    // Typing complete
+                    state.currentTime.setMinutes(state.currentTime.getMinutes() + 1);
+                    if (callback) callback();
+                }
+            }
+            
+            typeCharacter();
+        }
+
+        function showChoices(choices) {
+            const choicesContainer = document.getElementById('chatChoices');
+            choicesContainer.innerHTML = '';
+
+            choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => selectChoice(choice);
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function selectChoice(choice) {
+            // Play click sound
+            playSound('click');
+
+            // Add user's message with typing animation
+            addMessageWithTyping(choice.text, () => {
+                // Update risk score after typing completes
+                state.riskScore += choice.risk;
+                updateRiskMeter();
+
+                // Award green flag for safe choices (risk = 0)
+                if (choice.risk === 0) {
+                    awardGreenFlag();
+                }
+
+                // Record choice
+                state.choices.push({
+                    text: choice.text,
+                    label: choice.label,
+                    risk: choice.risk
+                });
+
+                // Move to next stage
+                state.currentStage++;
+                setTimeout(() => {
+                    playStage(state.currentStage);
+                }, 800);
+            });
+
+            // Clear choices immediately
+            document.getElementById('chatChoices').innerHTML = '';
+        }
+
+        // ==================== GREEN FLAG SYSTEM ====================
+        function awardGreenFlag() {
+            state.greenFlags++;
+            
+            // Play celebration sound
+            playSound('greenFlag');
+            
+            // Update display with animation
+            updateGreenTickDisplay();
+            
+            // Show intro modal for first green flag
+            if (!state.hasSeenGreenFlagIntro) {
+                state.hasSeenGreenFlagIntro = true;
+                setTimeout(() => {
+                    document.getElementById('greenFlagIntroModal').classList.add('active');
+                }, 500);
+            }
+        }
+
+        function updateGreenTickDisplay() {
+            const tickCount = document.getElementById('tickCount');
+            const tickIcon = document.getElementById('tickIcon');
+            
+            tickCount.textContent = state.greenFlags;
+            
+            // Add animation
+            tickIcon.classList.remove('earned-animation');
+            void tickIcon.offsetWidth; // Trigger reflow
+            tickIcon.classList.add('earned-animation');
+            
+            setTimeout(() => {
+                tickIcon.classList.remove('earned-animation');
+            }, 600);
+        }
+
+        function closeGreenFlagIntro() {
+            playSound('click');
+            document.getElementById('greenFlagIntroModal').classList.remove('active');
+        }
+
+        // ==================== CUTSCENE SYSTEM ====================
+        function showCutscene(cutscene, callback) {
+            const overlay = document.getElementById('cutsceneOverlay');
+            document.getElementById('cutsceneText').textContent = cutscene.text;
+            document.getElementById('cutsceneThought').textContent = cutscene.thought;
+            
+            overlay.classList.add('active');
+            
+            // Store callback for when user closes cutscene
+            overlay.dataset.callback = 'resumeAfterCutscene';
+            window.cutsceneCallback = callback;
+        }
+
+        function closeCutscene() {
+            const overlay = document.getElementById('cutsceneOverlay');
+            overlay.classList.remove('active');
+            
+            // Execute stored callback to resume conversation
+            if (window.cutsceneCallback) {
+                window.cutsceneCallback();
+                window.cutsceneCallback = null;
+            }
+        }
+
+        // ==================== RISK METER ====================
+        function updateRiskMeter() {
+            const maxRisk = 50; // Maximum possible risk
+            const percentage = Math.min((state.riskScore / maxRisk) * 100, 100);
+            const bar = document.getElementById('riskBar');
+            const levelText = document.getElementById('riskLevelText');
+
+            // Add pulse animation
+            bar.classList.add('pulse');
+            setTimeout(() => bar.classList.remove('pulse'), 600);
+
+            // Play notification sound
+            playSound('risk');
+
+            bar.style.width = percentage + '%';
+
+            if (state.riskScore <= 10) {
+                bar.style.background = '#28a745';
+                bar.textContent = 'LOW';
+                levelText.textContent = 'Low';
+                levelText.style.color = '#28a745';
+            } else if (state.riskScore <= 25) {
+                bar.style.background = '#ffc107';
+                bar.textContent = 'MEDIUM';
+                levelText.textContent = 'Medium';
+                levelText.style.color = '#ffc107';
+            } else {
+                bar.style.background = '#dc3545';
+                bar.textContent = 'HIGH';
+                levelText.textContent = 'High';
+                levelText.style.color = '#dc3545';
+            }
+        }
+
+        // ==================== END CONVERSATION ====================
+        function endConversation() {
+            document.getElementById('riskMeter').style.display = 'none';
+            showResults();
+        }
+
+        function showResults() {
+            showScreen('resultsScreen');
+            
+            const isHighRisk = state.riskScore > 15;
+            const icon = document.getElementById('resultsIcon');
+            const title = document.getElementById('resultsTitle');
+            const subtitle = document.getElementById('resultsSubtitle');
+
+            if (isHighRisk) {
+                icon.className = 'results-icon high';
+                icon.textContent = '⚠️';
+                title.textContent = 'High Risk Detected';
+                subtitle.textContent = `Your choices revealed personal information that could be used by someone with harmful intentions. However, you collected ${state.greenFlags} green tick${state.greenFlags !== 1 ? 's' : ''} for safe choices. Let's review what happened.`;
+            } else {
+                icon.className = 'results-icon low';
+                icon.textContent = '✅';
+                title.textContent = 'Good Safety Awareness';
+                subtitle.textContent = `You demonstrated caution by protecting your personal information and setting boundaries. You collected ${state.greenFlags} green tick${state.greenFlags !== 1 ? 's' : ''}!`;
+            }
+
+            // Display choices
+            const choicesList = document.getElementById('choicesList');
+            choicesList.innerHTML = '';
+            
+            state.choices.forEach(choice => {
+                const div = document.createElement('div');
+                div.className = `choice-item ${choice.risk > 5 ? 'risky' : 'safe'}`;
+                const tickEmoji = choice.risk === 0 ? ' ✅' : '';
+                div.textContent = `${choice.label}: "${choice.text}"${tickEmoji}`;
+                choicesList.appendChild(div);
+            });
+        }
+
+        // ==================== MINIGAME ====================
+        function startMinigame() {
+            showScreen('minigameScreen');
+            state.selectedFlag = null;
+            state.selectedResponse = null;
+            state.matchesComplete = 0;
+        }
+
+        function selectItem(element, type) {
+            // Ignore if already matched
+            if (element.classList.contains('correct')) return;
+
+            if (type === 'flag') {
+                // Deselect previous flag
+                document.querySelectorAll('[data-id^="redFlag"]').forEach(el => {
+                    el.classList.remove('selected', 'incorrect');
+                });
+                element.classList.add('selected');
+                state.selectedFlag = element.dataset.id;
+            } else {
+                // Response selected - check match
+                if (!state.selectedFlag) {
+                    showGameFeedback('Please select a red flag first!', false);
+                    return;
+                }
+
+                const flagElement = document.querySelector(`[data-id="${state.selectedFlag}"]`);
+                const responseMatch = element.dataset.match;
+
+                if (responseMatch === state.selectedFlag) {
+                    // Correct match!
+                    element.classList.add('correct');
+                    flagElement.classList.add('correct');
+                    state.matchesComplete++;
+                    
+                    playSound('success');
+                    showGameFeedback('Correct! Great job identifying that response.', true);
+
+                    if (state.matchesComplete === 4) {
+                        setTimeout(() => {
+                            showGameFeedback('🎉 Excellent! You matched all red flags with safe responses!', true);
+                            document.getElementById('finishBtn').style.display = 'block';
+                        }, 1000);
+                    }
+
+                    state.selectedFlag = null;
+                } else {
+                    // Wrong match
+                    element.classList.add('incorrect');
+                    playSound('click');
+                    setTimeout(() => {
+                        element.classList.remove('incorrect');
+                    }, 600);
+                    showGameFeedback('Not quite. Try a different response.', false);
+                }
+            }
+        }
+
+        function showGameFeedback(message, isSuccess) {
+            const feedback = document.getElementById('gameFeedback');
+            feedback.textContent = message;
+            feedback.className = `game-feedback active ${isSuccess ? 'success' : ''}`;
+            
+            if (!isSuccess) {
+                setTimeout(() => {
+                    feedback.classList.remove('active');
+                }, 2000);
+            }
+        }
+
+        function finishExperience() {
+            alert('Thank you for completing this safety awareness experience!\n\nKey Takeaways:\n• Be cautious with strangers online, even with mutual friends\n• Protect personal information (location, routines, supervision)\n• Set clear boundaries\n• Trust your instincts\n• Tell a trusted adult if something feels wrong\n\nStay safe online!');
+            
+            // Reset for replay
+            state.riskScore = 0;
+            state.currentStage = 0;
+            state.choices = [];
+            state.profilePhoto = null;
+            showScreen('setupScreen');
+            document.getElementById('usernameInput').value = '';
+            
+            // Reset avatar
+            const avatarPreview = document.getElementById('avatarPreview');
+            avatarPreview.style.backgroundImage = '';
+            avatarPreview.textContent = '👤';
+        }
+    </script>
+</body>
+</html>
