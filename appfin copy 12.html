@@ -1,0 +1,3554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOCMED SAFETY</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    cursor: default;
+}
+
+        button, .choice-btn, .match-item {
+            cursor: pointer;
+        }
+
+        /* Main container - simulates phone/tablet screen */
+        #app {
+            width: 960px;
+            height: 540px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen system */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Start Screen */
+        .start-container {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .start-content {
+            text-align: center;
+            max-width: 600px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .start-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .start-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .start-tagline {
+            font-size: 24px;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+    
+
+        .btn-start {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 18px 48px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            }
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            animation: none;
+        }
+
+        .btn-start:active {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Header bar */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Content area */
+
+        .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+        /* Setup Screen */
+        .setup-form {
+            max-width: 400px;
+            margin: 60px auto;
+            text-align: center;
+        }
+
+        .setup-form h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 28px;
+        }
+
+        .setup-form p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .avatar-placeholder {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .camera-btn-container {
+            height: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Friend Request Card */
+        .friend-request-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            margin: 40px auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .fr-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fr-avatar {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .fr-info h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .fr-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mutual-friends {
+            background: #f0f2f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #f0f2f5;
+            color: #333;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #e4e6eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+    
+      /* Profile Screen */
+.profile-header {
+    text-align: center;
+    padding: 30px 20px;
+    background: linear-gradient(180deg, #f0f2f5 0%, white 100%);
+}
+
+.profile-posts {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .joined-badge {
+            background: #fff3cd;
+            color: #856404;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .profile-posts {
+            padding: 20px;
+        }
+
+        .post {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .post-text {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 8px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 10px;
+            background: #f0f2f5;
+            min-height: 0;
+            max-height: calc(100% - 140px);
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 16px;
+            animation: slideInMessage 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes slideInMessage {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message.them {
+            justify-content: flex-start;
+        }
+
+        .message.them .message-bubble {
+            animation: bounceIn 0.4s ease;
+        }
+
+        .message.me {
+            justify-content: flex-end;
+        }
+
+        .message.me .message-bubble {
+            animation: slideInRight 0.4s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateX(-20px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.them .message-bubble {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.me .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-timestamp {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-choices {
+            padding: 10px 12px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .choice-btn {
+            flex: 1;
+            min-width: 180px;
+            max-width: 300px;
+            background: #f0f2f5;
+            border: 2px solid #e0e0e0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.2s;
+            line-height: 1.3;
+        }
+
+        .choice-btn:hover {
+            background: #e4e6eb;
+            border-color: #667eea;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .choice-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Risk Meter */
+        .risk-meter {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 160px;
+            z-index: 100;
+        }
+
+        /* User Profile Badge */
+        .user-profile-badge {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 101;
+        }
+
+        .user-profile-badge.active {
+            display: flex;
+        }
+
+        .user-badge-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .user-badge-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .risk-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .risk-bar-container {
+            background: #e0e0e0;
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .risk-bar {
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+            font-weight: 700;
+            padding: 0 8px;
+            min-width: 50px;
+        }
+
+        .risk-bar.pulse {
+            animation: riskPulse 0.6s ease;
+        }
+
+        @keyframes riskPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .risk-level-text {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Green Tick Counter (inside risk meter) */
+        .green-tick-section {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .tick-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tick-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .tick-counter {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tick-icon {
+            font-size: 18px;
+        }
+
+        .tick-icon.earned-animation {
+            animation: tickEarned 0.6s ease;
+        }
+
+        @keyframes tickEarned {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .tick-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        /* Typewriter Cutscene Styles - CYBERPUNK EDITION */
+.typewriter-cutscene {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.typewriter-cutscene.active {
+    display: flex;
+}
+
+.typewriter-content {
+    width: 960px;
+    height: 540px;
+    position: relative;
+    overflow: hidden;
+}
+
+.typewriter-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Cyberpunk Dialogue Wrapper - positioned in bottom third */
+.cyber-dialogue-wrapper {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    z-index: 10;
+}
+
+/* Name Tag - attached to top of dialogue box */
+.cyber-nametag {
+    position: absolute;
+    top: -25px;
+    left: 40px;
+    background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+    padding: 6px 20px;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    z-index: 11;
+}
+
+.cyber-nametag span {
+    font-family: 'PixelFont', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 2px;
+    text-transform: capitalize;
+}
+
+/* Main Dialogue Box - angled cyberpunk style */
+.cyber-dialogue-box {
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(0, 212, 255, 0.5);
+    clip-path: polygon(
+        20px 0, 
+        100% 0, 
+        100% calc(100% - 20px), 
+        calc(100% - 20px) 100%, 
+        0 100%, 
+        0 20px
+    );
+    box-shadow: 
+        0 0 40px rgba(0, 212, 255, 0.3),
+        inset 0 0 30px rgba(0, 212, 255, 0.1);
+    position: relative;
+}
+
+/* Accent corner glow effect */
+.cyber-dialogue-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.3), transparent);
+    pointer-events: none;
+}
+
+.cyber-dialogue-box::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at bottom left, rgba(102, 126, 234, 0.3), transparent);
+    pointer-events: none;
+}
+
+/* Inner content padding */
+.cyber-dialogue-inner {
+    padding: 30px 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Typewriter text styling */
+.typewriter-text {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 18px;
+    color: #ffffff;
+    min-height: 60px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.typewriter-cursor {
+    color: #00d4ff;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Progress indicator */
+.cyber-progress {
+    font-size: 13px;
+    color: #00d4ff;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: right;
+}
+
+/* Skip Button - bottom right, separate from dialogue */
+.cyber-skip-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    background: transparent;
+    border: 1px solid rgba(0, 212, 255, 0.5);
+    color: #00d4ff;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'PixelFont', monospace;
+    text-transform: capitalize;
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    transition: all 0.3s ease;
+}
+
+.cyber-skip-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Continue Button */
+.cyber-continue-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+    border: none;
+    color: #000;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'PixelFont', monospace;
+    text-transform: capitalize;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    transition: all 0.3s ease;
+}
+
+.cyber-continue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+}
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 500;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal-btn.cancel {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Results Screen */
+        .results-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .results-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .results-icon.low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .results-icon.high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .results-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .results-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .choice-review {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .choice-review h4 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .choice-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .choice-item.safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .choice-item.risky {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Mini Game */
+        .minigame-container {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .minigame-intro {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .minigame-intro h3 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .minigame-intro p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .matching-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .matching-column h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .match-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .match-item:hover {
+            border-color: #667eea;
+            transform: translateX(4px) scale(1.02);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .match-item.selected {
+            border-color: #667eea;
+            background: #f0f2f5;
+        }
+
+        .match-item.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            pointer-events: none;
+        }
+
+        .match-item.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .game-feedback {
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .game-feedback.active {
+            display: block;
+        }
+
+        .game-feedback.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive */
+        @media (max-width: 960px) {
+            #app {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .risk-meter {
+                right: 10px;
+                top: 70px;
+                min-width: 120px;
+                padding: 10px;
+            }
+            
+            .risk-label {
+                font-size: 11px;
+            }
+            
+            .risk-bar-container {
+                height: 20px;
+            }
+            
+            .risk-level-text {
+                font-size: 12px;
+            }
+
+            .user-profile-badge {
+                right: 10px;
+                top: 12px;
+                padding: 6px 10px;
+            }
+
+            .user-badge-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .user-badge-name {
+                font-size: 13px;
+                max-width: 80px;
+            }
+        }
+
+     /* Load custom pixel font */
+@font-face {
+    font-family: 'PixelFont';
+    src: url('pixelfont.ttf') format('truetype');
+}
+
+/* Container for the flip card */
+.flip-card-container {
+    perspective: 1000px; /* Creates 3D space for flip effect */
+    margin-bottom: 30px;
+}
+
+/* The flip card wrapper - horizontal business card size */
+.flip-card {
+    width: 600px;
+    height: 350px;
+    position: relative;
+    transform-style: preserve-3d; /* Enables 3D transforms for children */
+    transition: transform 0.6s ease;
+    cursor: pointer;
+}
+
+/* Flipped state - rotates card 180 degrees on Y axis */
+.flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+/* Common styles for both card faces */
+/* Common styles for both card faces */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    border: 3px solid #ffffff;
+    background: #ffffff; /* Solid white for contrast */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 40px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(102, 126, 234, 0.3);
+}
+
+/* Background for Lesson 1 Screen */
+#lesson1Screen .content {
+    background-image: url('bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Front face styling */
+.card-front {
+    z-index: 2;
+    gap: 30px;
+}
+
+/* Back face styling - rotated 180 degrees initially */
+.card-back {
+    transform: rotateY(180deg);
+    justify-content: center;
+    padding: 50px;
+}
+
+/* Header text using custom pixel font */
+.card-header {
+    font-family: 'PixelFont', monospace;
+    font-size: 24px;
+    color: #667eea;
+    text-align: center;
+    flex-shrink: 0;
+}
+/* Apply pixel font to the subtitle too */
+.card-header + p {
+    font-family: 'PixelFont', monospace;
+    color: #dc3545 !important;
+    font-weight: 600 !important;
+}
+
+/* Circular profile image - smaller for horizontal layout */
+.profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
+}
+
+/* Back card text content */
+.card-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+}
+
+/* Next button styling for lesson */
+.next-button {
+    background: white;
+    color: #667eea;
+    border: 3px solid #ffffff;
+    padding: 14px 40px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.next-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    background: #f0f2f5;
+}
+
+.next-button:active {
+    transform: translateY(0);
+}
+
+@font-face {
+    font-family: 'PixelFont';
+    src: url('pixelfont.ttf') format('truetype');
+}
+
+#dragDropScreen {
+    position: relative;
+}
+
+.drag-drop-background {
+    position: absolute;
+    inset: 0;
+    background-image: url('bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.drag-drop-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+}
+
+.drag-instruction {
+    font-family: 'PixelFont', monospace;
+    font-size: 24px;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.drag-card {
+    position: absolute;
+    left: 50%;
+    top: 120px;
+    transform: translate(-50%, 0);
+    width: 280px;
+    height: 160px;
+    background: white;
+    border-radius: 16px;
+    border: 3px solid #667eea;
+    padding: 30px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center center; /* Scale from center point */
+}
+
+.drag-card:active {
+    cursor: grabbing;
+}
+
+#dragCardText {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drop-zones {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 25px;
+    width: 100%;
+    max-width: 600px;
+    justify-content: center;
+}
+
+.drop-zone {
+    flex: 1;
+    width: 200px;
+    height: 160px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px dashed #ccc;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.drag-over {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.05);
+}
+
+.drop-zone-label {
+    font-family: 'PixelFont', monospace;
+    font-size: 20px;
+    color: #667eea;
+    font-weight: bold;
+    text-align: center;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.drag-shake-animation {
+    animation: dragShake 0.5s;
+}
+
+@keyframes dragShake {
+    0%, 100% { transform: translate(-50%, 0) translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-50%, 0) translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translate(-50%, 0) translateX(10px); }
+}
+/* Info Cards Activity */
+.info-card {
+    background: white;
+    border-radius: 16px;
+    border: 3px solid #e0e0e0;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    user-select: none;
+}
+
+.info-card:hover {
+    border-color: #667eea;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.info-card.selected {
+    border-color: #667eea;
+    background: #f0f2f5;
+    transform: scale(0.95);
+}
+
+.card-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid #e0e0e0;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.info-card.selected .card-indicator {
+    background: #667eea;
+    border-color: #667eea;
+}
+
+.info-card.selected .card-indicator::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.card-text p {
+    margin-bottom: 16px;
+}
+
+.card-text p:last-child {
+    margin-bottom: 0;
+}
+    </style>
+</head>
+<body>
+    <div id="app">
+
+
+        <!-- Start Screen (NEW) -->
+        <div class="screen active" id="startScreen">
+            <div class="start-container">
+                <div class="start-content">
+                    <div class="start-icon">🚩</div>
+                    <h1 class="start-title">Behind the Screen</h1>
+                    <p class="start-tagline">Would You Recognize the Red Flags?</p>
+                    <button class="btn-start" onclick="beginExperience()">Start Experience</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="juliaIntroScreen">
+    <div class="start-container" style="background: url(bg.png);">
+        <div class="start-content" style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 450px;">
+            <div class="avatar-placeholder" style="width: 80px; height: 80px; font-size: 36px; margin-bottom: 30px; background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%);">J</div>
+            <h2 class="start-title" style="font-size: 28px; color: #333; margin-bottom: 20px;">Julia [BFF]</h2>
+            <p class="start-tagline" style="font-size: 18px; color: #666; margin-bottom: 40px; font-style: italic;">
+                Hey! I just found this new app, Pbcupgram. It's awesome! You should totally make a profile right now. Let me know your username when you're done!
+            </p>
+            <button class="btn-primary" style="padding: 16px 40px; font-size: 18px;" onclick="showSetupScreen()">
+                Set Up Profile
+            </button>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Setup Screen -->
+        <div class="screen" id="setupScreen">
+            <div class="header">Welcome to Pbcupgram</div>
+            <div class="content">
+                <div class="setup-form">
+                    <div class="avatar-placeholder" id="avatarPreview">👤</div>
+                    <div class="camera-btn-container">
+                        <button class="btn-secondary" onclick="startCamera()" id="cameraBtn" style="width: auto; padding: 10px 20px;">
+                            📷 Take Profile Photo
+                        </button>
+                    </div>
+                    <div id="cameraContainer" style="display: none; margin-bottom: 20px;">
+                        <video id="cameraVideo" width="200" height="200" autoplay style="border-radius: 50%; border: 3px solid #667eea;"></video>
+                        <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
+                            <button class="btn-secondary" onclick="capturePhoto()" style="padding: 8px 16px; width: auto;">Capture</button>
+                            <button class="btn-secondary" onclick="stopCamera()" style="padding: 8px 16px; width: auto;">Cancel</button>
+                        </div>
+                    </div>
+                    <h2>Create Your Profile</h2>
+                    <p>Choose a username to get started</p>
+                    <input type="text" id="usernameInput" placeholder="Enter username" maxlength="20">
+                    <button class="btn-primary" onclick="completeSetup()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friend Request Screen -->
+        <div class="screen" id="friendRequestScreen">
+            <div class="header">Friend Requests</div>
+            <div class="content">
+                <div class="friend-request-card">
+                    <div class="fr-header">
+                       <div class="fr-avatar" style="background-image: url('alexandrapfp.jpg'); background-size: cover; background-position: center;"></div>
+<div class="fr-info">
+    <h3>Alexandra T.</h3> 
+    <p>Sent you a friend request</p>
+</div>
+                    </div>
+                    <div class="mutual-friends">
+                        👥 12 mutual friends
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-secondary" onclick="viewProfile()">View Profile</button>
+                        <button class="btn-primary" style="flex: 1;" onclick="showAcceptModal()">Accept</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Feed Screen (NEW) -->
+<div class="screen" id="socialFeedScreen">
+    <div class="header">
+        <button class="back-btn" onclick="goBack('profileScreen')">← Back</button>
+        <span>Alexandra T.'s Posts</span>
+        <span></span>
+    </div>
+    <div class="content" style="padding: 20px; background: #fafafa;">
+        <!-- Instagram-style grid -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 20px;">
+            <!-- Post 1 -->
+            <div style="position: relative; padding-bottom: 100%; background: #f0f0f0; cursor: pointer;" onclick="viewPost(1)">
+                <img src="genwelc.jpg" alt="Post 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                    <div>❤️ 4 💬 8</div>
+                </div>
+            </div>
+            
+            <!-- Post 2 -->
+            <div style="position: relative; padding-bottom: 100%; background: #f0f0f0; cursor: pointer;" onclick="viewPost(2)">
+                <img src="citsky.jpg" alt="Post 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                    <div>❤️ 320 💬 12</div>
+                </div>
+            </div>
+            
+            <!-- Post 3 -->
+            <div style="position: relative; padding-bottom: 100%; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); cursor: pointer;" onclick="viewPost(3)">
+                <img src="fake.png" alt="Post 3" style="position:absolute; top:0; left:0; width:100; height:100%; object-fit: cover;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 13px; text-align: center; padding: 10px;">
+                </div>
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                    <div>❤️ 50 💬 6</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 20px; background: white; text-align: center; border-radius: 8px;">
+            <button class="btn-primary" onclick="backToProfile()">Back to Profile</button>
+        </div>
+    </div>
+</div>
+
+<!-- Post Detail Modal -->
+<div class="modal-overlay" id="postDetailModal">
+    <div class="modal" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+        <div id="postDetailContent"></div>
+        <button class="modal-btn confirm" onclick="closePostDetail()" style="width: 100%; margin-top: 20px;">Close</button>
+    </div>
+</div>
+
+       <!-- Profile Screen -->
+<div class="screen" id="profileScreen">
+    <div class="header">
+        <button class="back-btn" onclick="goBack('friendRequestScreen')">← Back</button>
+        <span>Profile</span>
+        <span></span>
+    </div>
+    <div class="content" style="padding: 0;">
+        <div class="profile-header">
+           <div class="profile-avatar" style="background-image:url('alexandrapfp.jpg');background-size:cover;background-position:center;"></div>
+            <div class="profile-name">Alexandra T.</div>
+            <div class="profile-meta">
+                📍 Lives nearby<br>
+                🎓 Student
+            </div>
+            <div class="joined-badge">⚠️ Joined recently (2 weeks ago)</div>
+        </div>
+        
+        <!-- Instagram-style grid -->
+        <div style="padding: 20px; background: #fafafa;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 20px;">
+                <!-- Post 1 -->
+                <div style="position: relative; padding-bottom: 100%; background: #f0f0f0; cursor: pointer;" onclick="viewPost(1)">
+                    <img src="genwelc.jpg" alt="Post 1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                        <div>❤️ 4 💬 8</div>
+                    </div>
+                </div>
+                
+                <!-- Post 2 -->
+                <div style="position: relative; padding-bottom: 100%; background: #f0f0f0; cursor: pointer;" onclick="viewPost(2)">
+                    <img src="citsky.jpg" alt="Post 2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                        <div>❤️ 320 💬 12</div>
+                    </div>
+                </div>
+                
+                <!-- Post 3 -->
+                <div style="position: relative; padding-bottom: 100%; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); cursor: pointer;" onclick="viewPost(3)">
+                    <img src="fake.png" alt="Post 3" style="position:absolute; top:0; left:0; width:100; height:100%; object-fit: cover;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 13px; text-align: center; padding: 10px;">
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 8px; color: white; font-size: 12px;">
+                        <div>❤️ 50 💬 6</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 20px;">
+            <button class="btn-primary" onclick="showAcceptModal()">Accept Friend Request</button>
+        </div>
+    </div>
+</div>
+
+        <!-- Chat Screen -->
+        <div class="screen" id="chatScreen">
+            <div class="header">
+                <button class="back-btn" onclick="exitChat()">← Exit</button>
+                <span>Alexandra T.</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="chatHeaderAvatar" style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; background-size: cover; background-position: center;">👤</div>
+                    <span id="chatHeaderUsername" style="font-size: 14px; font-weight: 500;"></span>
+                </div>
+            </div>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-choices" id="chatChoices">
+                    <!-- Choices will be inserted here -->
+                </div>
+            </div>
+            <!-- Risk Meter (inside chat screen) -->
+            <div class="risk-meter" id="riskMeter" style="display: none;">
+                <div class="risk-label">RISK LEVEL</div>
+                <div class="risk-bar-container">
+                    <div class="risk-bar" id="riskBar" style="width: 0%; background: #28a745;">
+                        LOW
+                    </div>
+                </div>
+                <div class="risk-level-text" id="riskLevelText" style="color: #28a745;">Low</div>
+                
+                <!-- Green Tick Counter (combined in same box) -->
+                <div class="green-tick-section">
+                    <div class="tick-display">
+                        <span class="tick-label">SAFE CHOICES</span>
+                        <div class="tick-counter">
+                            <span class="tick-icon" id="tickIcon">✅</span>
+                            <span class="tick-count" id="tickCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="screen" id="resultsScreen">
+            <div class="header">Your Safety Report</div>
+            <div class="content">
+                <div class="results-container">
+                    <div class="results-icon" id="resultsIcon">🛡️</div>
+                    <h2 class="results-title" id="resultsTitle">Risk Assessment Complete</h2>
+                    <p class="results-subtitle" id="resultsSubtitle"></p>
+                    
+                    <div class="choice-review">
+                        <h4>Your Choices:</h4>
+                        <div id="choicesList"></div>
+                    </div>
+
+                    <button class="btn-primary" onclick="startMinigame()">Continue to Learning Activity</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minigame Screen -->
+        <div class="screen" id="minigameScreen">
+            <div class="header">Red Flag Recognition</div>
+            <div class="content">
+                <div class="minigame-container">
+                    <div class="minigame-intro">
+                        <h3>Match the Red Flags</h3>
+                        <p>Connect warning signs with safe responses</p>
+                    </div>
+                    <div class="matching-game">
+                        <div class="matching-column">
+                            <h4>🚩 Red Flags</h4>
+                            <div class="match-item" data-id="redFlag1" onclick="selectItem(this, 'flag')">
+                                Asking for personal info quickly
+                            </div>
+                            <div class="match-item" data-id="redFlag2" onclick="selectItem(this, 'flag')">
+                                Wants to meet alone soon
+                            </div>
+                            <div class="match-item" data-id="redFlag3" onclick="selectItem(this, 'flag')">
+                                Asks about supervision
+                            </div>
+                            <div class="match-item" data-id="redFlag4" onclick="selectItem(this, 'flag')">
+                                Requesting private photos
+                            </div>
+                        </div>
+                        <div class="matching-column">
+                            <h4>✅ Safe Responses</h4>
+                            <div class="match-item" data-id="response3" data-match="redFlag3" onclick="selectItem(this, 'response')">
+                                "I only share that with close friends"
+                            </div>
+                            <div class="match-item" data-id="response1" data-match="redFlag1" onclick="selectItem(this, 'response')">
+                                "Let's get to know each other first"
+                            </div>
+                            <div class="match-item" data-id="response4" data-match="redFlag4" onclick="selectItem(this, 'response')">
+                                "I'm not comfortable with that"
+                            </div>
+                            <div class="match-item" data-id="response2" data-match="redFlag2" onclick="selectItem(this, 'response')">
+                                "I prefer group settings"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-feedback" id="gameFeedback"></div>
+                    <button class="btn-primary" id="finishBtn" style="margin-top: 30px; display: none" onclick="finishExperience()">
+  Continue Expereince
+</button>
+
+                </div>
+            </div>
+        </div>
+
+    <!-- Lesson 1 Screen -->
+<div class="screen" id="lesson1Screen">
+    <div class="header"> Mini Lesson: Spotting AI Profiles</div>
+    <div class="content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
+        <!-- Flip card container with perspective -->
+        <div class="flip-card-container">
+            <!-- Card 1: Profile Picture -->
+            <div class="flip-card" id="flipCard1" style="display: block;">
+                <!-- Front face of card -->
+                <div class="card-face card-front">
+                    <div style="text-align: center;">
+                        <h2 class="card-header">Profile Picture</h2>
+                        <p style="font-size: 14px; color: #dc3545; margin-top: 8px; font-weight: 600;">[Click to learn more]</p>
+                    </div>
+                    <img src="alexandrapfp.jpg" alt="Alexandra's Profile" class="profile-image">
+                </div>
+                
+                <!-- Back face of card -->
+                <div class="card-face card-back">
+                    <div class="card-text">
+                        <p>At first glance, Alexandra looks real, but closer inspection reveals subtle signs of AI generation, 
+                        like features that appear slightly too perfect and evenly rendered.</p><p> These small inconsistencies show 
+                        how AI images can closely mimic real people while still giving themselves away on careful observation. 
+                        Take note of this!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Mutual Friends -->
+            <div class="flip-card" id="flipCard2" style="display: none;">
+                <!-- Front face of card -->
+                <div class="card-face card-front">
+                    <div style="text-align: center;">
+                        <h2 class="card-header">Mutual Friends</h2>
+                        <p style="font-size: 14px; color: #dc3545; margin-top: 8px; font-weight: 600;">[Click to learn more]</p>
+                    </div>
+                    <img src="mutuals.png" alt="Mutual friends preview" class="profile-image">
+                </div>
+                
+                <!-- Back face of card -->
+                <div class="card-face card-back">
+                    <div class="card-text">
+                    <p>Seeing mutual friends can make a profile feel more trustworthy, but shared connections don't always mean the person is real.</p>
+                    <p>Ask yourself: do you actually know these mutual friends in real life? If you're unsure, a good step is to check with them and ask about their relationship with the person.
+                    Fake accounts can also buy followers or add random connections to appear more established and credible.</p><p> Always look beyond the numbers before trusting a profile.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next button -->
+        <button class="next-button" onclick="handleNextLesson()">Next</button>
+    </div>
+</div>
+
+<div class="screen" id="dragDropScreen">
+    <div class="drag-drop-background"></div>
+    <div class="drag-drop-content">
+        <div class="drag-instruction">Drag the cards to the appropriate boxes</div>
+        
+        <div class="drag-card" id="dragCard" draggable="true" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+            <div id="dragCardText"></div>
+        </div>
+        
+        <div class="drop-zones">
+            <div class="drop-zone" ondrop="onDrop(event, 'worth')" ondragover="onDragOver(event)" ondragenter="onDragEnter(event)" ondragleave="onDragLeave(event)">
+                <div class="drop-zone-label">Positive Indicator</div>
+            </div>
+            <div class="drop-zone" ondrop="onDrop(event, 'red')" ondragover="onDragOver(event)" ondragenter="onDragEnter(event)" ondragleave="onDragLeave(event)">
+                <div class="drop-zone-label">Red Flag</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Info Cards Activity Screen -->
+<div class="screen" id="infoCardsScreen">
+    <div class="drag-drop-background"></div>
+    <div class="drag-drop-content">
+        <div class="drag-instruction" style="margin-top: 20px; margin-bottom: 10px;">Tap what you should never share with someone you don't know.</div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 700px; margin: 20px auto 20px;">
+            <div class="info-card" data-card="ss" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="ss.png" alt="Screenshot" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">Generic Screenshot</div>
+            </div>
+            <div class="info-card" data-card="file" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="file.png" alt="Files" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">General Files</div>
+            </div>
+            <div class="info-card" data-card="docs" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="docs.png" alt="Documents" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">Non-Sensitive Docs</div>
+            </div>
+            <div class="info-card" data-card="ic" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="ic.png" alt="ID Card" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">Identity Cards</div>
+            </div>
+            <div class="info-card" data-card="pass" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="pass.png" alt="Passport" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">Travel Documents</div>
+            </div>
+            <div class="info-card" data-card="cards" onclick="toggleInfoCard(this)">
+                <div class="card-indicator"></div>
+                <img src="cards.png" alt="Cards" style="width: 80px; height: 80px; margin-bottom: 12px;">
+                <div style="font-size: 14px; color: #333; text-align: center; font-weight: 600;">Financial Info</div>
+            </div>
+        </div>
+        
+        <button class="next-button" onclick="checkInfoCards()">Confirm</button>
+    </div>
+</div>
+
+<!-- Completion Screen -->
+<div class="screen" id="completionScreen">
+    <div class="drag-drop-background"></div>
+    <div class="drag-drop-content" style="position: relative; justify-content: center; align-items: center;">
+        <img src="celebover.png" id="celebOverlay" style="position: absolute; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: scale(0.3); transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);">
+        <h1 id="celebText" style="font-family: 'PixelFont', monospace; font-size: 64px; color: #ffffff; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); opacity: 0; transition: opacity 0.5s ease 0.6s; z-index: 10; margin-top: 80px;">Congratulations!</h1>
+    </div>
+</div>
+
+<!-- Info Cards Incorrect Modal -->
+<div class="modal-overlay" id="infoCardsIncorrectModal">
+    <div class="modal" style="max-width: 450px; text-align: center;">
+        <h3 style="font-family: 'PixelFont', monospace; color: #667eea; font-size: 28px; margin-bottom: 20px;">So close! Try Again.</h3>
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Hint: 3 cards out of 6 are correct.</p>
+        <button class="modal-btn confirm" onclick="closeInfoCardsModal()" style="width: 100%;">Try Again</button>
+    </div>
+</div>
+    </div>
+
+    <!-- Typewriter Cutscene -->
+<div class="typewriter-cutscene" id="typewriterCutscene">
+    <div class="typewriter-content">
+        <div class="typewriter-background"></div>
+        <!-- Cyberpunk Dialogue Box -->
+        <div class="cyber-dialogue-wrapper">
+            <!-- Name Tag -->
+            <div class="cyber-nametag">
+                <span>Byte</span>
+            </div>
+            
+            <!-- Main Dialogue Box -->
+            <div class="cyber-dialogue-box">
+                <div class="cyber-dialogue-inner">
+                    <div class="typewriter-text" id="typewriterText"></div>
+                    <div class="cyber-progress" id="typewriterProgress">1 / 6</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skip Button (separate, bottom right) -->
+        <button class="cyber-skip-btn" id="typewriterSkipBtn" onclick="skipTypewriterMessage()">Skip →</button>
+        <button class="cyber-continue-btn" style="display: none;" id="typewriterContinueBtn" onclick="completeTypewriter()">Continue</button>
+    </div>
+</div>
+
+
+   <!-- Cutscene Overlay -->
+    <div class="modal-overlay" id="cutsceneOverlay">
+        <div class="modal" style="max-width: 500px; position: relative; z-index: 1;">
+            <h3 id="cutsceneText" style="color: #dc3545; margin-bottom: 16px;"></h3>
+            <p id="cutsceneThought" style="font-style: italic; color: #666; margin-bottom: 24px;"></p>
+            <button class="modal-btn confirm" onclick="closeCutscene()" style="width: 100%; position: relative; z-index: 3;">Continue</button>
+        </div>
+        <img src="1.png" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 2;">
+    </div>
+
+    <!-- Drag Drop Completion Modal -->
+<div class="modal-overlay" id="dragDropCompleteModal">
+    <div class="modal" style="max-width: 450px; text-align: center;">
+        <h3 style="font-family: 'PixelFont', monospace; color: #667eea; font-size: 28px; margin-bottom: 20px;">Great job!</h3>
+        <p style="color: #333; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Great job identifying some of the warning signs. Now you know exactly what to look out for.</p>
+        <button class="modal-btn confirm" onclick="closeDragDropModal()" style="width: 100%;">Continue</button>
+    </div>
+</div>
+
+    <!-- Accept Modal -->
+
+    
+   <div class="modal-overlay" id="acceptModal">
+        <div class="modal">
+            <h3>⚠️ Are you sure?</h3>
+            <p>Do you really know this person? Fake accounts often use mutual friends to gain trust. It's safer to only accept requests from people you know in real life.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="acceptFriend()">Accept Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Green Flag Intro Modal -->
+    <div class="modal-overlay" id="greenFlagIntroModal">
+        <div class="modal" style="text-align: center;">
+            <div style="font-size: 80px; margin-bottom: 20px; animation: bounce 0.6s ease infinite;">✅</div>
+            <h3 style="color: #28a745;">Green Tick Earned!</h3>
+            <p>Great choice! You've earned your first green tick for making a safe decision. Keep collecting them by setting boundaries and protecting your information.</p>
+            <button class="modal-btn confirm" onclick="closeGreenFlagIntro()" style="width: 100%; margin-top: 10px;">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+
+ function showSetupScreen() {
+    startTypewriter(); // Start the typewriter cutscene first
+}
+
+function beginExperience() {
+    showScreen('juliaIntroScreen'); // Correctly shows the Julia screen first
+}
+
+
+
+function completeSetup() {}
+        // ==================== STATE MANAGEMENT ====================
+        const state = {
+            username: '',
+            profilePhoto: null,
+            riskScore: 0,
+            greenFlags: 0,
+            hasSeenGreenFlagIntro: false,
+            currentStage: 0,
+            choices: [],
+            selectedFlag: null,
+            selectedResponse: null,
+            matchesComplete: 0,
+            cameraStream: null,
+            soundEnabled: true,
+            currentTime: new Date(2024, 11, 1, 14, 30) // Start at Dec 1, 2024, 2:30 PM
+        };
+
+        // ==================== TYPEWRITER CUTSCENE ====================
+// --- TYPEWRITER SYSTEM (supports intro + after-game) ---
+
+// Original intro narration
+const typewriterMessages = [
+  "Hey there! I’m Byte, your guide through Pbcupgram.",
+  "In this experience, you’ll step into a familiar social media world.",
+  "Your goal? Spot red flags before they put you at risk.",
+  "Each choice you make affects your safety level.",
+  "Set boundaries, think twice, and collect green ticks for smart decisions.",
+  "Let’s see how well you can stay safe online. Click continue to set up your profile!"
+];
+
+// New narration after the minigame
+const typewriterMessagesAfterGame = [
+  {
+    background: "bytehappy.png",
+    text: "Great job matching the warning signs with safe responses! Now you know how to better protect yourself online."
+  },
+  {
+    background: "bytecurious.png",
+    text: "However, let’s take a closer look at Alexandra’s profile. Were there any warning signs you might have missed the first time? Sometimes, small details can reveal more than we expect."
+  }
+];
+
+const typewriterMessagesAfterLesson = [
+  {
+    background: "bytegenai.png",
+    text: "Identifying warning signs online often comes down to noticing the small things. Subtle patterns in behaviour or gaps in what's shared can be easy to miss unless you slow down and look a little closer."
+  },
+  {
+    background: "bytegenai.png",
+    text: "With generative AI making it easier to create polished profiles and convincing interactions, not everything online is as genuine as it first appears. Taking a moment to observe, rather than react, can make these signs easier to spot."
+  },
+  {
+    background: "bytegenai.png",
+    text: "Now that you know what to look out for, let's give it a go. Take a moment and see what stands out to you next."
+  }
+];
+
+const typewriterMessagesAfterDragDrop = [
+  {
+    background: "bytesmart.png",
+    text: "Nice work. You've picked up some key signs that can help you pause and think before trusting a profile."
+  },
+  {
+    background: "bytesmart.png",
+    text: "Before we wrap up, let's do a final check!"
+  },
+  {
+    background: "bytesmart.png",
+    text: "AI-generated profiles can also ask for real information. You must remember never to share this online."
+  }
+];
+
+const typewriterMessagesFinal = [
+  {
+    background: "bytecelebrate.png",
+    text: "Amazing job! AI can do incredible things, but it also means we need to be more mindful online."
+  },
+  {
+    background: "bytecelebrate.png",
+    text: "The skills you've practised here can help you stay safe and protect yourself against online harms."
+  },
+  {
+    background: "bytecelebrate.png",
+    text: "I hope I was able to help! Until next time, take care and stay curious."
+  }
+];
+
+// Mode: "intro" (start of experience) or "afterGame" (after minigame)
+let typewriterMode = "intro";
+
+let typewriterState = {
+  currentMessageIndex: 0,
+  currentCharIndex: 0,
+  isTyping: true
+};
+
+function getCurrentMessagesArray() {
+  if (typewriterMode === "afterGame") {
+    return typewriterMessagesAfterGame.map(m => m.text);
+  }
+  if (typewriterMode === "afterLesson") {
+    return typewriterMessagesAfterLesson.map(m => m.text);
+  }
+  if (typewriterMode === "afterDragDrop") {
+    return typewriterMessagesAfterDragDrop.map(m => m.text);
+  }
+  if (typewriterMode === "final") {
+    return typewriterMessagesFinal.map(m => m.text);
+  }
+  return typewriterMessages;
+}
+
+function updateTypewriterBackground() {
+  if (typewriterMode !== "afterGame" && typewriterMode !== "afterLesson" && typewriterMode !== "afterDragDrop" && typewriterMode !== "final") return;
+
+  const bgDiv = document.querySelector(".typewriter-background");
+  if (!bgDiv) return;
+
+  let item;
+  if (typewriterMode === "afterGame") {
+    item = typewriterMessagesAfterGame[typewriterState.currentMessageIndex];
+  } else if (typewriterMode === "afterLesson") {
+    item = typewriterMessagesAfterLesson[typewriterState.currentMessageIndex];
+  } else if (typewriterMode === "afterDragDrop") {
+    item = typewriterMessagesAfterDragDrop[typewriterState.currentMessageIndex];
+  } else if (typewriterMode === "final") {
+    item = typewriterMessagesFinal[typewriterState.currentMessageIndex];
+  }
+  
+  if (!item) return;
+
+
+  bgDiv.style.backgroundImage = `url('${item.background}')`;
+  bgDiv.style.backgroundSize = "cover";
+  bgDiv.style.backgroundPosition = "center";
+}
+
+function startTypewriter(mode = "intro") {
+  typewriterMode = mode;
+
+  const cutscene = document.getElementById("typewriterCutscene");
+  const textElement = document.getElementById("typewriterText");
+  const progressElement = document.getElementById("typewriterProgress");
+  const skipBtn = document.getElementById("typewriterSkipBtn");
+  const continueBtn = document.getElementById("typewriterContinueBtn");
+
+  if (!cutscene || !textElement || !progressElement || !skipBtn || !continueBtn) return;
+
+cutscene.classList.add("active");
+  
+  // Hide skip button for final narration, show it for others
+  if (mode === "final") {
+    skipBtn.style.display = "none";
+  } else {
+    skipBtn.style.display = "inline-block";
+  }
+  
+  continueBtn.style.display = "none";
+
+  typewriterState.currentMessageIndex = 0;
+  typewriterState.currentCharIndex = 0;
+  typewriterState.isTyping = true;
+
+const bgDiv = document.querySelector(".typewriter-background");
+if (typewriterMode === "afterGame" || typewriterMode === "afterLesson" || typewriterMode === "afterDragDrop" || typewriterMode === "final") {
+  updateTypewriterBackground();
+} else if (bgDiv) {
+  bgDiv.style.backgroundImage = "url('byte intro.png')";
+  bgDiv.style.backgroundSize = "cover";
+  bgDiv.style.backgroundPosition = "center";
+}
+typeNextCharacter();
+}
+
+function typeNextCharacter() {
+  const messages = getCurrentMessagesArray();
+  const textElement = document.getElementById("typewriterText");
+  const progressElement = document.getElementById("typewriterProgress");
+
+  if (!textElement || !progressElement) return;
+
+  if (typewriterState.currentMessageIndex >= messages.length) {
+    finishTypewriter();
+    return;
+  }
+
+  const currentMessage = messages[typewriterState.currentMessageIndex];
+
+  if (typewriterState.currentCharIndex < currentMessage.length) {
+    textElement.innerHTML =
+      currentMessage.substring(0, typewriterState.currentCharIndex + 1) +
+      '<span class="typewriter-cursor">|</span>';
+
+    if (typewriterState.currentCharIndex % 2 === 0) {
+      playSound("typing");
+    }
+
+    typewriterState.currentCharIndex++;
+    setTimeout(typeNextCharacter, 50);
+  } else {
+    textElement.innerHTML = currentMessage;
+    progressElement.textContent = `${typewriterState.currentMessageIndex + 1} / ${messages.length}`;
+
+    setTimeout(() => {
+      typewriterState.currentMessageIndex++;
+      typewriterState.currentCharIndex = 0;
+
+      if (typewriterMode === "afterGame") {
+        updateTypewriterBackground();
+      }
+
+      typeNextCharacter();
+    }, 1500);
+  }
+}
+
+function skipTypewriterMessage() {
+  const messages = getCurrentMessagesArray();
+  const textElement = document.getElementById("typewriterText");
+  const progressElement = document.getElementById("typewriterProgress");
+
+  if (!textElement || !progressElement) return;
+
+  if (typewriterState.currentMessageIndex < messages.length - 1) {
+    textElement.innerHTML = messages[typewriterState.currentMessageIndex];
+    progressElement.textContent = `${typewriterState.currentMessageIndex + 1} / ${messages.length}`;
+
+    typewriterState.currentMessageIndex++;
+    typewriterState.currentCharIndex = 0;
+
+ if (typewriterMode === "afterGame") {
+        updateTypewriterBackground();
+      }
+      if (typewriterMode === "afterLesson") {
+        updateTypewriterBackground();
+      }
+      if (typewriterMode === "afterDragDrop") {
+        updateTypewriterBackground();
+      }
+
+    setTimeout(typeNextCharacter, 100);
+  } else {
+    finishTypewriter();
+  }
+}
+
+function finishTypewriter() {
+  const messages = getCurrentMessagesArray();
+  const textElement = document.getElementById("typewriterText");
+  const skipBtn = document.getElementById("typewriterSkipBtn");
+  const continueBtn = document.getElementById("typewriterContinueBtn");
+
+  if (!textElement || !skipBtn || !continueBtn) return;
+
+  textElement.innerHTML = messages[messages.length - 1];
+  skipBtn.style.display = "none";
+  continueBtn.style.display = "block";
+  typewriterState.isTyping = false;
+}
+
+function completeTypewriter() {
+  const cutscene = document.getElementById("typewriterCutscene");
+  if (!cutscene) return;
+
+  if (typewriterMode === "intro") {
+    cutscene.classList.remove("active");
+    showScreen("setupScreen");
+  } else if (typewriterMode === "afterGame") {
+    cutscene.classList.remove("active");
+    showScreen("lesson1Screen");
+  } else if (typewriterMode === "afterLesson") {
+    cutscene.classList.remove("active");
+    startDragDropGame();
+  } else if (typewriterMode === "afterDragDrop") {
+    cutscene.classList.remove("active");
+    showScreen("infoCardsScreen");
+  } else if (typewriterMode === "final") {
+    // Don't hide cutscene yet, just change the button
+    const continueBtn = document.getElementById("typewriterContinueBtn");
+    continueBtn.textContent = "Complete Experience";
+    continueBtn.onclick = resetExperience;
+  }
+}
+
+
+
+        // ==================== SOUND SYSTEM ====================
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playSound(type) {
+            if (!state.soundEnabled) return;
+
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            switch(type) {
+                case 'message':
+                    // Gentle notification sound
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.15);
+                    break;
+                
+                case 'click':
+                    // Button click sound
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.05);
+                    break;
+                
+                case 'typing':
+                    // Typing sound (short click)
+                    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.03);
+                    break;
+                
+                case 'risk':
+                    // Warning tone
+                    oscillator.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(250, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.2);
+                    break;
+                
+                case 'success':
+                    // Success chime
+                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.3);
+                    break;
+
+                case 'greenFlag':
+                    // Green flag celebration sound (ascending happy notes)
+                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.08);
+                    oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.16);
+                    gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.4);
+                    break;
+            }
+        }
+
+        // ==================== CONVERSATION STAGES ====================
+        const conversationStages = [
+            {
+                // Stage 0: Initial greeting
+                messages: [
+                    { sender: 'them', text: "Hey {username}! Thanks for accepting my friend request! 😊", delay: 1000 },
+                    { sender: 'them', text: "I saw we have some mutual friends. How do you know them?", delay: 2000 }
+                ],
+                choices: [
+                    { text: "We go to the same school", risk: 5, label: "Shared location info" },
+                    { text: "We're in the same hobby group", risk: 2, label: "Vague response" },
+                    { text: "I'd rather not share that yet", risk: 0, label: "Boundary setting" }
+                ],
+                cutscene: null
+            },
+            {
+                // Stage 1: Location probing
+                lowRisk: [
+                    { sender: 'them', text: "That's cool! What area of town are you in?", delay: 2000 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Oh nice! Which school? I might know some people there.", delay: 2000 }
+                ],
+                choices: [
+                    { text: "I live near Hillview", risk: 8, label: "Precise location shared" },
+                    { text: "Just somewhere in the West", risk: 3, label: "Vague location" },
+                    { text: "I prefer to keep that private for now", risk: 0, label: "Privacy maintained" }
+                ],
+                cutscene:  {
+                    text: "Alexandra is asking about where you live...",
+                    thought: "Byte: Should you be sharing this information with someone you just met online?"
+                }
+            },
+            {
+                // Stage 2: Escalation - supervision questions
+                lowRisk: [
+                    { sender: 'them', text: "No problem {username}, I understand.", delay: 1500 },
+                    { sender: 'them', text: "So do your parents check your phone often? Mine are so annoying about it 🙄", delay: 2500 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Nice! I'm not too far from there actually.", delay: 1500 },
+                    { sender: 'them', text: "Do your parents ever check who you're talking to? Mine don't really pay attention lol", delay: 2500 }
+                ],
+                choices: [
+                    { text: "No, they don't really check", risk: 10, label: "Revealed lack of supervision" },
+                    { text: "Sometimes they do", risk: 5, label: "Partial info shared" },
+                    { text: "That's kind of personal, why do you ask?", risk: 0, label: "Questioned motive" }
+                ],
+                cutscene: {
+                    text: "Now Alexandra wants to know if adults are monitoring your conversations...",
+                    thought: "Byte: Why would they need to know if your parents check your phone? This feels uncomfortable."
+                }
+            },
+            {
+                // Stage 3: Meeting suggestion
+                lowRisk: [
+                    { sender: 'them', text: "Fair enough.", delay: 1500 },
+                    { sender: 'them', text: "Well {username}, maybe meeting up would be better?", delay: 2000 }
+                ],
+                highRisk: [
+                    { sender: 'them', text: "Cool, so we could chat freely then.", delay: 1500 },
+                    { sender: 'them', text: "Maybe we could meet up sometime {username}? Like grab coffee or something?", delay: 2500 },
+                    { sender: 'them', text: "Just the two of us, would be fun to get to know you better 😊", delay: 3500 }
+                ],
+                choices: [
+                    { text: "Sure, that sounds great!", risk: 15, label: "Agreed to private meeting" },
+                    { text: "Maybe with our mutual friends?", risk: 5, label: "Suggested group setting" },
+                    { text: "I don't meet people I only know online", risk: 0, label: "Clear boundary" }
+                ],
+                cutscene: {
+                    text: "Alexandra is pushing to meet in person, alone...",
+                    thought: "Byte: This is happening too fast. You barely know this person. Something doesn't feel right."
+                }
+            }
+        ];
+
+        // ==================== CAMERA FUNCTIONS ====================
+        async function startCamera() {
+            const video = document.getElementById('cameraVideo');
+            const container = document.getElementById('cameraContainer');
+            const cameraBtn = document.getElementById('cameraBtn');
+            const avatarPreview = document.getElementById('avatarPreview');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 640 },
+                        facingMode: 'user'
+                    } 
+                });
+                
+                video.srcObject = stream;
+                state.cameraStream = stream;
+                container.style.display = 'block';
+                cameraBtn.style.display = 'none';
+                avatarPreview.style.display = 'none'; // Hide placeholder
+            } catch (error) {
+                alert('Camera access denied or not available. You can continue without a profile photo.');
+                console.error('Camera error:', error);
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, 200, 200);
+            
+            const photoData = canvas.toDataURL('image/png');
+            state.profilePhoto = photoData;
+            
+            // Update avatar preview
+            const avatarPreview = document.getElementById('avatarPreview');
+            avatarPreview.style.backgroundImage = `url(${photoData})`;
+            avatarPreview.style.backgroundSize = 'cover';
+            avatarPreview.style.backgroundPosition = 'center';
+            avatarPreview.textContent = '';
+            avatarPreview.style.display = 'flex'; // Show again with photo
+            
+            // Stop camera
+            stopCamera();
+        }
+
+        function stopCamera() {
+            const avatarPreview = document.getElementById('avatarPreview');
+            
+            if (state.cameraStream) {
+                state.cameraStream.getTracks().forEach(track => track.stop());
+                state.cameraStream = null;
+            }
+            
+            document.getElementById('cameraContainer').style.display = 'none';
+            document.getElementById('cameraBtn').style.display = 'block';
+            avatarPreview.style.display = 'flex'; // Show placeholder again
+        }
+
+        // ==================== SCREEN NAVIGATION ====================
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goBack(screenId) {
+            showScreen(screenId);
+        }
+
+        function exitChat() {
+            showScreen('friendRequestScreen');
+        }
+
+        function beginExperience() {
+            playSound('click');
+            showScreen('setupScreen');
+        }
+
+           function beginExperience() {
+            // Navigate to the new friend intro screen
+            showScreen('juliaIntroScreen');
+        }
+        
+
+        // ==================== SETUP ====================
+        function completeSetup() {
+            const username = document.getElementById('usernameInput').value.trim();
+            if (!username) {
+                alert('Please enter a username');
+                return;
+            }
+            state.username = username;
+            
+            // Stop camera if still running
+            if (state.cameraStream) {
+                stopCamera();
+            }
+            
+            showScreen('friendRequestScreen');
+        }
+
+        // ==================== FRIEND REQUEST ====================
+        function viewProfile() {
+            showScreen('profileScreen');
+        }
+
+        function showAcceptModal() {
+            document.getElementById('acceptModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('acceptModal').classList.remove('active');
+        }
+
+
+        function acceptFriend() {
+            closeModal();
+            startChat();
+        }
+
+        // ==================== CHAT SYSTEM ====================
+        function startChat() {
+            showScreen('chatScreen');
+            document.getElementById('riskMeter').style.display = 'block';
+            document.getElementById('chatMessages').innerHTML = '<div class="typing-indicator" id="typingIndicator"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+            document.getElementById('chatChoices').innerHTML = '';
+            
+            // Update chat header with user info
+            const headerAvatar = document.getElementById('chatHeaderAvatar');
+            const headerUsername = document.getElementById('chatHeaderUsername');
+            
+            headerUsername.textContent = state.username;
+            
+            if (state.profilePhoto) {
+                headerAvatar.style.backgroundImage = `url(${state.profilePhoto})`;
+                headerAvatar.style.backgroundSize = 'cover';
+                headerAvatar.style.backgroundPosition = 'center';
+                headerAvatar.textContent = '';
+            }
+            
+            // Reset time to start of conversation
+            state.currentTime = new Date(2024, 11, 1, 14, 30);
+            
+            state.currentStage = 0;
+            state.choices = [];
+            state.greenFlags = 0;
+            state.hasSeenGreenFlagIntro = false;
+            updateGreenTickDisplay();
+            
+            playStage(0);
+        }
+
+        function formatTime(date) {
+            let hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            return `${hours}:${minutes} ${ampm}`;
+        }
+
+function playStage(stageIndex) {
+            console.log('Playing stage:', stageIndex, 'Risk score:', state.riskScore); // DEBUG
+            
+            if (stageIndex >= conversationStages.length) {
+                endConversation();
+                return;
+            }
+
+            const stage = conversationStages[stageIndex];
+            let messages;
+
+            // Update time between stages (without showing dividers)
+            if (stageIndex === 1) {
+                state.currentTime.setHours(state.currentTime.getHours() + 2);
+            } else if (stageIndex === 2) {
+                state.currentTime.setDate(state.currentTime.getDate() + 1);
+                state.currentTime.setHours(19, 0); // Next day, 7 PM
+            } else if (stageIndex === 3) {
+                state.currentTime.setHours(state.currentTime.getHours() + 1);
+            }
+
+            // Determine which message path based on risk
+            if (stageIndex === 0) {
+                messages = stage.messages;
+            } else {
+                messages = state.riskScore >= 10 ? stage.highRisk : stage.lowRisk;
+            }
+
+            console.log('Messages to play:', messages); // DEBUG
+            console.log('Stage has choices:', !!stage.choices); // DEBUG
+
+            // Check if stage has choices
+            if (!stage.choices) {
+                // No choices, just play messages and continue
+                playMessages(messages, () => {
+                    state.currentStage++;
+                    playStage(state.currentStage);
+                });
+                return;
+            }
+
+            // Play messages, then show cutscene if exists, then show choices
+            playMessages(messages, () => {
+                console.log('Messages finished, checking cutscene'); // DEBUG
+                if (stage.cutscene) {
+                    showCutscene(stage.cutscene, () => {
+                        console.log('Cutscene done, showing choices'); // DEBUG
+                        showChoices(stage.choices);
+                    });
+                } else {
+                    console.log('No cutscene, showing choices directly'); // DEBUG
+                    showChoices(stage.choices);
+                }
+            });
+        }
+        function playMessages(messages, callback) {
+            let delay = 0;
+            const typingIndicator = document.getElementById('typingIndicator');
+
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    if (msg.sender === 'them') {
+                        // Move typing indicator to bottom before showing
+                        const messagesContainer = document.getElementById('chatMessages');
+                        messagesContainer.appendChild(typingIndicator);
+                        typingIndicator.classList.add('active');
+                    }
+                }, delay);
+
+                delay += msg.delay;
+
+                setTimeout(() => {
+                    typingIndicator.classList.remove('active');
+                    addMessage(msg.sender, msg.text);
+                    
+                    if (index === messages.length - 1) {
+                        callback();
+                    }
+                }, delay);
+            });
+        }
+
+        function addMessage(sender, text) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === 'them' ? 'them' : 'me'}`;
+            
+            // Replace {username} placeholder with actual username
+            const displayText = text.replace(/{username}/g, state.username);
+            
+            // Add timestamp
+            const timestamp = formatTime(state.currentTime);
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${displayText}
+                    <span class="message-timestamp">${timestamp}</span>
+                </div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Advance time slightly for next message (1-2 minutes)
+            state.currentTime.setMinutes(state.currentTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
+
+            // Play sound for incoming messages
+            if (sender === 'them') {
+                playSound('message');
+            }
+        }
+
+        // New function for typing effect on user messages
+        function addMessageWithTyping(text, callback) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message me';
+            
+            const timestamp = formatTime(state.currentTime);
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = `<span class="message-timestamp">${timestamp}</span>`;
+            
+            const textSpan = document.createElement('span');
+            bubble.insertBefore(textSpan, bubble.firstChild);
+            
+            messageDiv.appendChild(bubble);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            let currentChar = 0;
+            const typingSpeed = 30; // milliseconds per character
+            
+            function typeCharacter() {
+                if (currentChar < text.length) {
+                    textSpan.textContent += text[currentChar];
+                    currentChar++;
+                    
+                    // Play typing sound every 3 characters for rhythm
+                    if (currentChar % 3 === 0) {
+                        playSound('typing');
+                    }
+                    
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    setTimeout(typeCharacter, typingSpeed);
+                } else {
+                    // Typing complete
+                    state.currentTime.setMinutes(state.currentTime.getMinutes() + 1);
+                    if (callback) callback();
+                }
+            }
+            
+            typeCharacter();
+        }
+
+        function showChoices(choices) {
+            const choicesContainer = document.getElementById('chatChoices');
+            choicesContainer.innerHTML = '';
+
+            choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice.text;
+                btn.onclick = () => selectChoice(choice);
+                choicesContainer.appendChild(btn);
+            });
+        }
+
+        function selectChoice(choice) {
+            // Play click sound
+            playSound('click');
+
+            // Add user's message with typing animation
+            addMessageWithTyping(choice.text, () => {
+                // Update risk score after typing completes
+                state.riskScore += choice.risk;
+                updateRiskMeter();
+
+                // Award green flag for safe choices (risk = 0)
+                if (choice.risk === 0) {
+                    awardGreenFlag();
+                }
+
+                // Record choice
+                state.choices.push({
+                    text: choice.text,
+                    label: choice.label,
+                    risk: choice.risk
+                });
+
+                // Move to next stage
+                state.currentStage++;
+                setTimeout(() => {
+                    playStage(state.currentStage);
+                }, 800);
+            });
+
+            // Clear choices immediately
+            document.getElementById('chatChoices').innerHTML = '';
+        }
+
+        // ==================== GREEN FLAG SYSTEM ====================
+        function awardGreenFlag() {
+            state.greenFlags++;
+            
+            // Play celebration sound
+            playSound('greenFlag');
+            
+            // Update display with animation
+            updateGreenTickDisplay();
+            
+            // Show intro modal for first green flag
+            if (!state.hasSeenGreenFlagIntro) {
+                state.hasSeenGreenFlagIntro = true;
+                setTimeout(() => {
+                    document.getElementById('greenFlagIntroModal').classList.add('active');
+                }, 500);
+            }
+        }
+
+        function updateGreenTickDisplay() {
+            const tickCount = document.getElementById('tickCount');
+            const tickIcon = document.getElementById('tickIcon');
+            
+            tickCount.textContent = state.greenFlags;
+            
+            // Add animation
+            tickIcon.classList.remove('earned-animation');
+            void tickIcon.offsetWidth; // Trigger reflow
+            tickIcon.classList.add('earned-animation');
+            
+            setTimeout(() => {
+                tickIcon.classList.remove('earned-animation');
+            }, 600);
+        }
+
+        function closeGreenFlagIntro() {
+            playSound('click');
+            document.getElementById('greenFlagIntroModal').classList.remove('active');
+        }
+
+        // ==================== CUTSCENE SYSTEM ====================
+     function showCutscene(cutscene, callback) {
+            console.log('showCutscene called with:', cutscene); // DEBUG
+            const overlay = document.getElementById('cutsceneOverlay');
+            
+            if (!overlay) {
+                console.error('cutsceneOverlay element not found!'); // DEBUG
+                // If overlay doesn't exist, just skip cutscene and continue
+                if (callback) callback();
+                return;
+            }
+            
+            document.getElementById('cutsceneText').textContent = cutscene.text;
+            document.getElementById('cutsceneThought').textContent = cutscene.thought;
+            
+            overlay.classList.add('active');
+            
+            // Store callback for when user closes cutscene
+            window.cutsceneCallback = callback;
+            console.log('Cutscene displayed, callback stored'); // DEBUG
+        }
+
+        function closeCutscene() {
+            console.log('closeCutscene called'); // DEBUG
+            playSound('click');
+            const overlay = document.getElementById('cutsceneOverlay');
+            overlay.classList.remove('active');
+            
+            // Execute stored callback to resume conversation
+            if (window.cutsceneCallback) {
+                console.log('Executing cutscene callback'); // DEBUG
+                window.cutsceneCallback();
+                window.cutsceneCallback = null;
+            } else {
+                console.log('No callback found!'); // DEBUG
+            }
+        }
+
+        // ==================== RISK METER ====================
+        function updateRiskMeter() {
+            const maxRisk = 50; // Maximum possible risk
+            const percentage = Math.min((state.riskScore / maxRisk) * 100, 100);
+            const bar = document.getElementById('riskBar');
+            const levelText = document.getElementById('riskLevelText');
+
+            // Add pulse animation
+            bar.classList.add('pulse');
+            setTimeout(() => bar.classList.remove('pulse'), 600);
+
+            // Play notification sound
+            playSound('risk');
+
+            bar.style.width = percentage + '%';
+
+            if (state.riskScore <= 10) {
+                bar.style.background = '#28a745';
+                bar.textContent = 'LOW';
+                levelText.textContent = 'Low';
+                levelText.style.color = '#28a745';
+            } else if (state.riskScore <= 25) {
+                bar.style.background = '#ffc107';
+                bar.textContent = 'MEDIUM';
+                levelText.textContent = 'Medium';
+                levelText.style.color = '#ffc107';
+            } else {
+                bar.style.background = '#dc3545';
+                bar.textContent = 'HIGH';
+                levelText.textContent = 'High';
+                levelText.style.color = '#dc3545';
+            }
+        }
+
+        // ==================== END CONVERSATION ====================
+        function endConversation() {
+            document.getElementById('riskMeter').style.display = 'none';
+            showResults();
+        }
+
+        function showResults() {
+            showScreen('resultsScreen');
+            
+            const isHighRisk = state.riskScore > 15;
+            const icon = document.getElementById('resultsIcon');
+            const title = document.getElementById('resultsTitle');
+            const subtitle = document.getElementById('resultsSubtitle');
+
+            if (isHighRisk) {
+                icon.className = 'results-icon high';
+                icon.textContent = '⚠️';
+                title.textContent = 'High Risk Detected';
+                subtitle.textContent = `Your choices revealed personal information that could be used by someone with harmful intentions. However, you collected ${state.greenFlags} green tick${state.greenFlags !== 1 ? 's' : ''} for safe choices. Let's review what happened.`;
+            } else {
+                icon.className = 'results-icon low';
+                icon.textContent = '✅';
+                title.textContent = 'Good Safety Awareness';
+                subtitle.textContent = `You demonstrated caution by protecting your personal information and setting boundaries. You collected ${state.greenFlags} green tick${state.greenFlags !== 1 ? 's' : ''}!`;
+            }
+
+            // Display choices
+            const choicesList = document.getElementById('choicesList');
+            choicesList.innerHTML = '';
+            
+            state.choices.forEach(choice => {
+                const div = document.createElement('div');
+                div.className = `choice-item ${choice.risk > 5 ? 'risky' : 'safe'}`;
+                const tickEmoji = choice.risk === 0 ? ' ✅' : '';
+                div.textContent = `${choice.label}: "${choice.text}"${tickEmoji}`;
+                choicesList.appendChild(div);
+            });
+        }
+
+        // ==================== MINIGAME ====================
+        function startMinigame() {
+            showScreen('minigameScreen');
+            state.selectedFlag = null;
+            state.selectedResponse = null;
+            state.matchesComplete = 0;
+        }
+
+        function selectItem(element, type) {
+            // Ignore if already matched
+            if (element.classList.contains('correct')) return;
+
+            if (type === 'flag') {
+                // Deselect previous flag
+                document.querySelectorAll('[data-id^="redFlag"]').forEach(el => {
+                    el.classList.remove('selected', 'incorrect');
+                });
+                element.classList.add('selected');
+                state.selectedFlag = element.dataset.id;
+            } else {
+                // Response selected - check match
+                if (!state.selectedFlag) {
+                    showGameFeedback('Please select a red flag first!', false);
+                    return;
+                }
+
+                const flagElement = document.querySelector(`[data-id="${state.selectedFlag}"]`);
+                const responseMatch = element.dataset.match;
+
+                if (responseMatch === state.selectedFlag) {
+                    // Correct match
+                    element.classList.add('correct');
+                    flagElement.classList.add('correct');
+                    state.matchesComplete++;
+                    
+                    playSound('success');
+                    showGameFeedback('Correct! Great job identifying that response.', true);
+
+                    if (state.matchesComplete === 4) {
+                        setTimeout(() => {
+                            showGameFeedback('🎉 Excellent! You matched all red flags with safe responses!', true);
+                            document.getElementById('finishBtn').style.display = 'block';
+                        }, 1000);
+                    }
+
+                    state.selectedFlag = null;
+                } else {
+                    // Wrong match
+                    element.classList.add('incorrect');
+                    playSound('click');
+                    setTimeout(() => {
+                        element.classList.remove('incorrect');
+                    }, 600);
+                    showGameFeedback('Not quite. Try a different response.', false);
+                }
+            }
+        }
+
+        function showGameFeedback(message, isSuccess) {
+            const feedback = document.getElementById('gameFeedback');
+            feedback.textContent = message;
+            feedback.className = `game-feedback active ${isSuccess ? 'success' : ''}`;
+            
+            if (!isSuccess) {
+                setTimeout(() => {
+                    feedback.classList.remove('active');
+                }, 2000);
+            }
+        }
+
+        function finishExperience() {
+  // Optionally show results or any final screen first
+  showScreen("resultsScreen"); // change or remove if you want a different flow
+
+  // Start the new Byte narration sequence using the same typewriter UI
+  startTypewriter("afterGame");
+}
+
+// ==================== LESSON 1: FLIP CARD ====================
+// Get the flip card elements and add click listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const flipCard1 = document.getElementById('flipCard1');
+    const flipCard2 = document.getElementById('flipCard2');
+    
+    if (flipCard1) {
+        flipCard1.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+            playFlipSound();
+        });
+    }
+    
+    if (flipCard2) {
+        flipCard2.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+            playFlipSound();
+        });
+    }
+});
+
+
+// Play flip sound effect
+function playFlipSound() {
+    if (!state.soundEnabled) return;
+    const audio = new Audio('flip.mp3');
+    audio.volume = 0.1;
+    audio.play().catch(err => console.log('Flip audio play failed:', err));
+}
+
+// Handle Next button in Lesson 1
+let currentLessonCard = 1;
+// Update total cards count
+const totalLessonCards = 4;
+
+// Lesson card data
+const lessonCards = {
+  3: {
+    front: {
+      title: "Doctored Images",
+      subtitle: "[Click to learn more]",
+      image: "faketravel.png"
+    },
+    back: {
+      text: `<p>Some AI-generated images are more obvious once you look closely. One common sign is impossible or unrealistic combinations.</p>
+             <p>In this example, two iconic landmarks, the Statue of Liberty and Big Ben, appear together in the same image. This scenario couldn't exist in real life, making it a clear sign the image has been doctored.</p>
+             <p>When something in a photo feels unrealistic, take a moment to question its authenticity before trusting the account.</p>`
+    }
+  },
+  4: {
+    front: {
+      title: "Inconsistent Engagement",
+      subtitle: "[Click to learn more]",
+      image: "engagement.png"
+    },
+    back: {
+      text: `<p>One common red flag is inconsistent engagement. These patterns can suggest the activity isn't organic.</p>
+             <p>Fake accounts often buy likes or engagement to appear more legitimate. When the numbers don't seem to match the level of interaction, it's worth taking a closer look before trusting the account.</p>`
+    }
+  }
+};
+
+function handleNextLesson() {
+    playSound('click');
+    
+    if (currentLessonCard < totalLessonCards) {
+        // Hide current card
+        const currentCard = document.getElementById(`flipCard${currentLessonCard}`);
+        currentCard.style.display = 'none';
+        
+        // Move to next card
+        currentLessonCard++;
+        let nextCard = document.getElementById(`flipCard${currentLessonCard}`);
+        
+        // If card doesn't exist (cards 3+), create it
+        if (!nextCard && lessonCards[currentLessonCard]) {
+            nextCard = createLessonCard(currentLessonCard, lessonCards[currentLessonCard]);
+        }
+        
+        // Show next card
+        nextCard.style.display = 'block';
+        nextCard.classList.remove('flipped');
+    } else {
+        // All cards shown
+        currentLessonCard = 1;
+        startTypewriter("afterLesson");
+    }
+}
+
+function createLessonCard(cardNum, data) {
+    const container = document.querySelector('.flip-card-container');
+    
+    const card = document.createElement('div');
+    card.className = 'flip-card';
+    card.id = `flipCard${cardNum}`;
+    card.style.display = 'none';
+    
+    card.innerHTML = `
+        <div class="card-face card-front">
+            <div style="text-align: center;">
+                <h2 class="card-header">${data.front.title}</h2>
+                <p style="font-size: 14px; color: #dc3545; margin-top: 8px; font-weight: 600;">${data.front.subtitle}</p>
+            </div>
+            <img src="${data.front.image}" alt="${data.front.title}" class="profile-image">
+        </div>
+        <div class="card-face card-back">
+            <div class="card-text">${data.back.text}</div>
+        </div>
+    `;
+    
+    card.addEventListener('click', function() {
+        this.classList.toggle('flipped');
+        playFlipSound();
+    });
+    
+    container.appendChild(card);
+    return card;
+}
+const dragDropCards = [
+  { text: "Asks unusually personal or specific questions early", category: "red" },
+  { text: "Messages sound copied or scripted", category: "red" },
+  { text: "Profile feels overly polished or generic", category: "red" },
+  { text: "Engagement patterns don't stay consistent over time", category: "red" },
+  { text: "Images look edited or don't quite match each other", category: "red" },
+  { text: "Mutual friends that you know in real life", category: "worth" },
+  { text: "People that you have interacted with in real life", category: "worth" },
+  { text: "Consistent engagement", category: "worth" }
+];
+
+let shuffledCards = [];
+let currentCardIndex = 0;
+let draggedCard = null;
+
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+function startDragDropGame() {
+  showScreen('dragDropScreen');
+  shuffledCards = shuffleArray(dragDropCards);
+  currentCardIndex = 0;
+  showNextDragCard();
+}
+
+function showNextDragCard() {
+  if (currentCardIndex >= shuffledCards.length) {
+    setTimeout(() => {
+      document.getElementById('dragDropCompleteModal').classList.add('active');
+    }, 500);
+    return;
+  }
+
+  const card = shuffledCards[currentCardIndex];
+  const cardElement = document.getElementById('dragCard');
+  const cardText = document.getElementById('dragCardText');
+  
+  cardText.textContent = card.text;
+  cardElement.style.display = 'block';
+  cardElement.style.opacity = '0';
+  cardElement.style.transform = 'translate(-50%, 0) scale(0.8)';
+  
+  setTimeout(() => {
+    cardElement.style.transition = 'all 0.3s ease';
+    cardElement.style.opacity = '1';
+    cardElement.style.transform = 'translate(-50%, 0) scale(1)';
+  }, 50);
+}
+
+function onDragStart(e) {
+  draggedCard = shuffledCards[currentCardIndex];
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', e.target.innerHTML);
+  e.target.style.opacity = '0.5';
+}
+
+function onDragEnd(e) {
+  e.target.style.opacity = '1';
+}
+
+function onDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function onDragEnter(e) {
+  e.target.closest('.drop-zone').classList.add('drag-over');
+}
+
+function onDragLeave(e) {
+  e.target.closest('.drop-zone').classList.remove('drag-over');
+}
+
+function onDrop(e, zone) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+  
+  e.target.closest('.drop-zone').classList.remove('drag-over');
+  
+  const cardElement = document.getElementById('dragCard');
+  const correct = draggedCard.category === zone;
+  
+  if (correct) {
+    playSound('success');
+    const dropZone = e.target.closest('.drop-zone');
+    const rect = dropZone.getBoundingClientRect();
+    
+    // Move card to drop zone using transform (prevents layout recalc)
+    cardElement.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    cardElement.style.position = 'fixed';
+    cardElement.style.left = rect.left + rect.width / 2 + 'px';
+    cardElement.style.top = rect.top + rect.height / 2 + 'px';
+    cardElement.style.transform = 'translate(-50%, -50%) scale(1)';
+    
+    setTimeout(() => {
+      const tick = document.createElement('div');
+      tick.innerHTML = '✓';
+      tick.style.position = 'absolute';
+      tick.style.top = '8px';
+      tick.style.right = '8px';
+      tick.style.fontSize = '28px';
+      tick.style.color = '#28a745';
+      tick.style.fontWeight = 'bold';
+      tick.style.animation = 'tickPop 0.4s ease';
+      cardElement.appendChild(tick);
+      
+      setTimeout(() => {
+        // Scale down card as a single unit (no layout reflow)
+        cardElement.style.transform = 'translate(-50%, -50%) scale(0.7)';
+        
+        setTimeout(() => {
+          // Fade out while maintaining scale
+          cardElement.style.opacity = '0';
+          
+          setTimeout(() => {
+            // Reset card for next iteration
+            cardElement.innerHTML = '<div id="dragCardText"></div>';
+            cardElement.style.position = 'absolute';
+            cardElement.style.left = '50%';
+            cardElement.style.top = '120px';
+            cardElement.style.transform = 'translate(-50%, 0) scale(1)';
+            cardElement.style.opacity = '1';
+            currentCardIndex++;
+            showNextDragCard();
+          }, 400);
+        }, 400);
+      }, 500);
+    }, 500);
+  } else {
+    playSound('click');
+    cardElement.classList.add('drag-shake-animation');
+    setTimeout(() => {
+      cardElement.classList.remove('drag-shake-animation');
+    }, 600);
+  }
+  
+  return false;
+}
+
+function closeDragDropModal() {
+  playSound('click');
+  document.getElementById('dragDropCompleteModal').classList.remove('active');
+  startTypewriter("afterDragDrop");
+}
+
+// ==================== INFO CARDS ACTIVITY ====================
+let selectedInfoCards = new Set();
+
+function toggleInfoCard(element) {
+  playSound('click');
+  const cardId = element.dataset.card;
+  
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected');
+    selectedInfoCards.delete(cardId);
+  } else {
+    element.classList.add('selected');
+    selectedInfoCards.add(cardId);
+  }
+}
+
+function checkInfoCards() {
+  playSound('click');
+  
+  const correctCards = new Set(['ic', 'pass', 'cards']);
+  const incorrectCards = new Set(['ss', 'file', 'docs']);
+  
+  // Check if exactly 3 cards selected
+  if (selectedInfoCards.size !== 3) {
+    showInfoCardsIncorrect();
+    return;
+  }
+  
+  // Check if any incorrect card is selected
+  for (let card of selectedInfoCards) {
+    if (incorrectCards.has(card)) {
+      showInfoCardsIncorrect();
+      return;
+    }
+  }
+  
+  // Check if all correct cards are selected
+  let allCorrect = true;
+  for (let card of correctCards) {
+    if (!selectedInfoCards.has(card)) {
+      allCorrect = false;
+      break;
+    }
+  }
+  
+ if (allCorrect) {
+    // Success - show completion
+    playSound('success');
+    setTimeout(() => {
+      showCompletionScreen();
+    }, 500);
+  } else {
+    showInfoCardsIncorrect();
+  }
+}
+
+function showInfoCardsIncorrect() {
+  playSound('click'); // Play fail sound
+  const audio = new Audio('fail.mp3');
+  audio.volume = state.soundEnabled ? 0.1 : 0;
+  audio.play().catch(err => console.log('Audio play failed:', err));
+  
+  document.getElementById('infoCardsIncorrectModal').classList.add('active');
+}
+
+function closeInfoCardsModal() {
+  playSound('click');
+  document.getElementById('infoCardsIncorrectModal').classList.remove('active');
+  
+  // Reset selections
+  selectedInfoCards.clear();
+  document.querySelectorAll('.info-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+}
+
+// ==================== COMPLETION SEQUENCE ====================
+function showCompletionScreen() {
+  showScreen('completionScreen');
+  
+  // Trigger overlay animation
+  setTimeout(() => {
+    const overlay = document.getElementById('celebOverlay');
+    const text = document.getElementById('celebText');
+    
+    overlay.style.opacity = '1';
+    overlay.style.transform = 'scale(1)';
+    
+    // Play winner sound when animation completes
+    setTimeout(() => {
+      playWinnerSound();
+      text.style.opacity = '1';
+      
+      // Start final narration after celebration (extended duration)
+      setTimeout(() => {
+        startTypewriter("final");
+      }, 3500);
+    }, 600);
+  }, 100);
+}
+
+function playWinnerSound() {
+  const audio = new Audio('winner.mp3');
+  audio.volume = state.soundEnabled ? 0.1 : 0;
+  audio.play().catch(err => console.log('Audio play failed:', err));
+}
+
+
+
+function resetExperience() {
+  playSound('click');
+  
+  // Reset all state
+  state.username = '';
+  state.profilePhoto = null;
+  state.riskScore = 0;
+  state.greenFlags = 0;
+  state.hasSeenGreenFlagIntro = false;
+  state.currentStage = 0;
+  state.choices = [];
+  state.selectedFlag = null;
+  state.selectedResponse = null;
+  state.matchesComplete = 0;
+  selectedInfoCards.clear();
+  currentLessonCard = 1;
+  
+  // Hide typewriter
+  document.getElementById("typewriterCutscene").classList.remove("active");
+  
+  // Return to start screen
+  showScreen('startScreen');
+}
+
+// ==================== POST DETAIL VIEW ====================
+function viewPost(postNum) {
+    playSound('click');
+    const modal = document.getElementById('postDetailModal');
+    const content = document.getElementById('postDetailContent');
+    
+    const posts = {
+        1: {
+            image: 'genwelc.jpg',
+            caption: 'Just joined! Super excited to meet new people in the area! 🎉',
+            likes: 4,
+            comments: 8,
+            time: '2 weeks ago'
+        },
+        2: {
+            image: 'citsky.jpg',
+            caption: 'Love exploring the city! Anyone know good spots to hang out? 🌆',
+            likes: 320,
+            comments: 12,
+            time: '1 week ago'
+        },
+        3: {
+            image: 'fake.png',
+            caption: 'Looking forward to making real connections here. Feels like everyone\'s so fake online these days 😊',
+            likes: 50,
+            comments: 6,
+            time: '5 days ago'
+        }
+    };
+    
+    const post = posts[postNum];
+    
+    content.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px;">🙂</div>
+            <div>
+                <div style="font-weight: 600; font-size: 15px; color: #333;">Alexandra T.</div>
+                <div style="font-size: 13px; color: #666;">${post.time}</div>
+            </div>
+        </div>
+        ${post.image ? `<img src="${post.image}" alt="Post" style="width: 100%; border-radius: 8px; margin-bottom: 16px;">` : ''}
+        <div style="color: #333; font-size: 15px; line-height: 1.5; margin-bottom: 16px;">
+            ${post.caption}
+        </div>
+        <div style="display: flex; gap: 20px; color: #666; font-size: 14px;">
+            <span>❤️ ${post.likes} likes</span>
+            <span>💬 ${post.comments} comments</span>
+        </div>
+    `;
+    
+    modal.classList.add('active');
+}
+
+function closePostDetail() {
+    playSound('click');
+    document.getElementById('postDetailModal').classList.remove('active');
+}
+    </script>
+</body>
+</html>
